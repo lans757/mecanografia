@@ -9,9 +9,10 @@ Guía para docentes y encargados de computación. No hace falta saber de inform�
 | Las computadoras tienen **Windows 10 u 11** | `Instalar-MecanografiaFeliz.exe` | [Paso a paso](#-instalar-en-windows-recomendado) |
 | No se puede instalar nada, o quieres llevarlo en **pendrive** | Carpeta `MecanografiaFeliz-portable` | [Sin instalar](#-usar-sin-instalar-pendrive) |
 | Las computadoras tienen **Linux** (por ejemplo, Canaima) | Carpeta `MecanografiaFeliz-linux` | [Linux](#-linux-canaima) |
-| Nada de lo anterior funciona | `mecanografia-feliz.html` | [En el navegador](#-en-el-navegador-funciona-en-cualquier-equipo) |
+| Hay **internet** y no quieres instalar nada | La página web | [https://mecanografia-feliz.vercel.app](https://mecanografia-feliz.vercel.app) |
+| No hay internet y nada de lo anterior funciona | `mecanografia-feliz.html` | [En el navegador](#-en-el-navegador-funciona-en-cualquier-equipo) |
 
-Todos los archivos se descargan de la sección **Releases** del proyecto en GitHub. **No se necesita internet** para usar el programa, solo para descargarlo.
+Todos los archivos se descargan de **[Releases](https://github.com/lans757/mecanografia/releases)** en GitHub. **No se necesita internet** para usar el programa, solo para descargarlo.
 
 ---
 
@@ -73,6 +74,9 @@ El progreso **no** se guarda en el pendrive: queda en cada computadora donde se 
 
 ## 🌐 En el navegador (funciona en cualquier equipo)
 
+**Con internet:** entra a **https://mecanografia-feliz.vercel.app**. No hay que descargar nada.
+
+**Sin internet:**
 1. Copia **`mecanografia-feliz.html`** a la computadora.
 2. Haz **doble clic**: se abre en Chrome, Edge o Firefox.
 

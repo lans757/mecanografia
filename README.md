@@ -3,6 +3,9 @@
 Programa para que niñas y niños de 6.º grado y 1.er año (11-13 años) aprendan a escribir con los diez dedos.
 Funciona **sin internet**.
 
+🌐 **Juega ahora en el navegador:** https://mecanografia-feliz.vercel.app
+📥 **Descarga para Windows y Linux:** [Releases](https://github.com/lans757/mecanografia/releases) · [Guía de instalación](INSTALACION.md)
+
 ## Para el docente
 
 ### Instalar en las computadoras

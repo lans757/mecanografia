@@ -1,0 +1,16 @@
+{
+  "name": "mecanografia-feliz",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Práctica de mecanografía para niñas y niños de 11 a 13 años",
+  "author": "Leonardo Caripa <leonardocaripadev@gmail.com> (https://github.com/caripadev)",
+  "license": "MIT",
+  "scripts": {
+    "app": "neu run",
+    "construir": "node scripts/construir.mjs"
+  },
+  "devDependencies": {
+    "@neutralinojs/neu": "11.8.0",
+    "rcedit": "5.0.2"
+  }
+}

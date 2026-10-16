@@ -1,0 +1,41 @@
+{
+  "$schema": "https://raw.githubusercontent.com/neutralinojs/neutralinojs/main/schemas/neutralino.config.schema.json",
+  "applicationId": "org.mecanografiafeliz.app",
+  "version": "1.0.0",
+  "applicationName": "Mecanografia Feliz",
+  "author": "Leonardo Caripa",
+  "description": "Mecanografia Feliz - practica de mecanografia para ninos",
+  "copyright": "(c) 2026 Leonardo Caripa - Licencia MIT - github.com/caripadev",
+  "defaultMode": "window",
+  "port": 0,
+  "documentRoot": "/resources/",
+  "url": "/",
+  "enableServer": true,
+  "enableNativeAPI": true,
+  "tokenSecurity": "one-time",
+  "logging": { "enabled": false, "writeToLogFile": false },
+  "nativeAllowList": ["app.*", "os.getPath", "os.open", "filesystem.readFile", "filesystem.writeFile", "filesystem.createDirectory"],
+  "modes": {
+    "window": {
+      "title": "Mecanografía Feliz",
+      "width": 1180,
+      "height": 860,
+      "minWidth": 900,
+      "minHeight": 640,
+      "center": true,
+      "maximize": true,
+      "icon": "/resources/icons/icono.png",
+      "enableInspector": false,
+      "resizable": true,
+      "exitProcessOnClose": true
+    }
+  },
+  "cli": {
+    "binaryName": "MecanografiaFeliz",
+    "resourcesPath": "/resources/",
+    "extensionsPath": "/extensions/",
+    "clientLibrary": "/resources/js/neutralino.js",
+    "binaryVersion": "6.10.0",
+    "clientVersion": "6.10.0"
+  }
+}

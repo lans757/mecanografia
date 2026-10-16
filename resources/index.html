@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mecanografía Feliz</title>
+<meta name="description" content="Aprende a escribir con los diez dedos: lecciones, juegos y récords para niñas y niños. Gratis y sin publicidad.">
+<link rel="icon" type="image/png" href="icons/icono.png">
+<!--
+  Mecanografía Feliz: práctica de mecanografía para niñas y niños de 11 a 13 años.
+  Funciona de dos formas:
+    1. Como programa de Windows (MecanografiaFeliz.exe, hecho con Neutralino).
+       Los datos se guardan en %APPDATA%\MecanografiaFeliz\datos.json
+    2. Como página suelta: doble clic a este archivo en Chrome, Edge o Firefox.
+       Los datos se guardan en el navegador.
+  No necesita internet.
+-->
+<style>
+:root{
+  --fondo:#f4f7fb; --panel:#ffffff; --texto:#1f2a3a; --suave:#6b7a90; --borde:#d8e0ea;
+  --acento:#2f7cf6; --acento-2:#1b5fd1; --bien:#1f9d55; --mal:#e03b3b; --estrella:#f5b301;
+  --tecla:#ffffff; --tecla-borde:#c9d3df; --sombra:0 2px 0 #c9d3df;
+  --lp:#e98bd6; --lr:#7fb2ff; --lm:#72d39a; --li:#ffc35c; --ri:#ffc35c; --rm:#72d39a; --rr:#7fb2ff; --rp:#e98bd6; --pu:#c8ced8;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --fondo:#151b26; --panel:#1e2633; --texto:#e8eef7; --suave:#9aa8bc; --borde:#334155;
+    --tecla:#263142; --tecla-borde:#3b4a60; --sombra:0 2px 0 #0e131b;
+    --lp:#a3549a; --lr:#3f6fb8; --lm:#3a8c5c; --li:#b9832a; --ri:#b9832a; --rm:#3a8c5c; --rr:#3f6fb8; --rp:#a3549a; --pu:#55606f;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--texto);font-family:"Segoe UI",Roboto,Arial,sans-serif;font-size:17px;line-height:1.4}
+button{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:10px 18px;background:var(--acento);color:#fff;font-weight:600}
+button:hover{background:var(--acento-2)}
+button.sec{background:transparent;color:var(--texto);border:2px solid var(--borde)}
+button.sec:hover{border-color:var(--acento)}
+button.peligro{background:var(--mal)}
+input,textarea,select{font:inherit;padding:10px 12px;border-radius:10px;border:2px solid var(--borde);background:var(--panel);color:var(--texto)}
+.oculto{display:none!important}
+header{display:flex;align-items:center;gap:10px;padding:10px 20px;background:var(--panel);border-bottom:1px solid var(--borde);flex-wrap:wrap}
+header h1{font-size:22px;margin:0;flex:1;white-space:nowrap}
+header nav{display:flex;gap:8px;flex-wrap:wrap}
+header nav button{padding:8px 14px}
+main{max-width:1000px;margin:0 auto;padding:20px 16px 40px}
+.panel{background:var(--panel);border:1px solid var(--borde);border-radius:18px;padding:20px}
+.centro{text-align:center}
+h2{margin:0 0 12px}
+.suave{color:var(--suave)}
+.error{color:var(--mal);font-weight:600;min-height:24px;margin:8px 0}
+.botones{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+
+/* Avatares y jugadores */
+.avatar{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;font-size:26px;flex:none}
+.avatar.grande{width:72px;height:72px;font-size:42px}
+.chip{display:flex;align-items:center;gap:8px;font-weight:600}
+.chip .avatar{width:34px;height:34px;font-size:20px}
+.jugadores{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:16px 0}
+.jugador{display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--fondo);color:var(--texto);border:2px solid var(--borde);padding:14px 8px;font-weight:600}
+.jugador:hover{border-color:var(--acento);background:var(--fondo)}
+.jugador .mini{font-size:13px;color:var(--suave);font-weight:normal}
+.elegir{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0 14px}
+.elegir button{background:var(--fondo);border:3px solid transparent;padding:6px;border-radius:50%;width:54px;height:54px;font-size:28px;color:var(--texto)}
+.elegir button.sel{border-color:var(--acento)}
+.elegir.colores button{width:38px;height:38px}
+#vistaPrevia{margin:6px auto 10px}
+
+/* Menú */
+.resumen{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+.resumen .grande{font-size:28px;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.tarjeta{background:var(--panel);border:2px solid var(--borde);border-radius:16px;padding:14px;cursor:pointer;text-align:left;color:var(--texto);font-weight:normal;display:flex;flex-direction:column;gap:4px}
+.tarjeta:hover{border-color:var(--acento);background:var(--panel)}
+.tarjeta .num{font-size:13px;color:var(--suave)}
+.tarjeta .tit{font-weight:700}
+.tarjeta .teclas{font-family:Consolas,monospace;color:var(--suave);font-size:15px}
+.tarjeta .est{color:var(--estrella);font-size:20px;letter-spacing:2px}
+.vacia{color:var(--borde)}
+.tarjeta.extra{border-style:dashed}
+.tarjeta .nuevo{align-self:flex-start;background:var(--bien);color:#fff;border-radius:8px;padding:0 8px;font-size:12px;font-weight:700}
+.seccion{margin:26px 0 10px;font-size:19px}
+
+/* Práctica */
+.barra{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.barra .titulo{flex:1;font-weight:700;font-size:19px}
+.datos{display:flex;gap:18px;color:var(--suave);font-size:15px;align-items:center}
+.datos b{color:var(--texto);font-size:18px}
+#reloj.urgente b{color:var(--mal)}
+#texto{font-family:Consolas,"Courier New",monospace;font-size:30px;line-height:1.7;white-space:pre-wrap;padding:18px 22px;min-height:150px;max-height:260px;overflow:hidden;border-radius:16px;background:var(--panel);border:2px solid var(--borde);position:relative}
+#texto .pal{display:inline-block;white-space:nowrap}
+#texto .c{border-radius:5px;padding:0 1px}
+#texto .c.hecho{color:var(--bien)}
+#texto .c.hecho.fallo{color:var(--mal);text-decoration:underline wavy}
+#texto .c.pend{color:var(--suave)}
+#texto .c.actual{background:var(--acento);color:#fff;animation:titila 1s infinite}
+#texto .c.actual.equivocado{background:var(--mal)}
+@keyframes titila{50%{opacity:.75}}
+.pista{text-align:center;margin:12px 0;font-size:19px;min-height:28px}
+.pista b{font-size:22px}
+.aviso{background:#fff3cd;color:#7a5a00;border-radius:10px;padding:8px 12px;text-align:center;margin-bottom:10px}
+.empieza{text-align:center;color:var(--suave);margin-top:6px;font-size:15px}
+.sinmirar #zonaTeclado,.sinmirar #pista{display:none}
+.sinmirar.ayuda #zonaTeclado{display:block}
+.sinmirar.ayuda #pista{display:block}
+
+/* Teclado */
+.teclado{margin:8px auto 0;display:flex;flex-direction:column;gap:6px;width:max-content;max-width:100%;user-select:none}
+.fila{display:flex;gap:6px;justify-content:center}
+.tecla{width:50px;height:50px;border-radius:9px;background:var(--tecla);border:1px solid var(--tecla-borde);box-shadow:var(--sombra);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:17px;font-weight:600;position:relative;transition:transform .05s;color:var(--texto)}
+.tecla .sup{font-size:11px;color:var(--suave);line-height:1}
+.tecla .agr{position:absolute;right:4px;bottom:2px;font-size:10px;color:var(--suave)}
+.tecla.ancha{font-size:12px;color:var(--suave);font-weight:500}
+.colores .tecla.d-lp{background:var(--lp)} .colores .tecla.d-lr{background:var(--lr)} .colores .tecla.d-lm{background:var(--lm)} .colores .tecla.d-li{background:var(--li)}
+.colores .tecla.d-ri{background:var(--ri)} .colores .tecla.d-rm{background:var(--rm)} .colores .tecla.d-rr{background:var(--rr)} .colores .tecla.d-rp{background:var(--rp)} .colores .tecla.d-pu{background:var(--pu)}
+.colores .tecla .sup,.colores .tecla .agr{color:inherit;opacity:.7}
+.tecla.guia::after{content:"";position:absolute;bottom:6px;width:12px;height:3px;border-radius:2px;background:currentColor;opacity:.6}
+.tecla.siguiente{outline:4px solid var(--acento);outline-offset:1px;transform:translateY(-3px);z-index:1}
+.tecla.pulsada{transform:translateY(2px);box-shadow:none}
+.tecla.error{outline:4px solid var(--mal)}
+#zonaTeclado{overflow-x:auto}
+
+/* Manos */
+.manos{display:flex;justify-content:center;gap:60px;margin-top:14px}
+.manos svg{width:170px;height:auto}
+.manos rect,.manos ellipse{fill:var(--tecla);stroke:var(--tecla-borde);stroke-width:2}
+.colores .manos .f-lp,.colores .manos .f-rp{fill:var(--lp)} .colores .manos .f-lr,.colores .manos .f-rr{fill:var(--lr)}
+.colores .manos .f-lm,.colores .manos .f-rm{fill:var(--lm)} .colores .manos .f-li,.colores .manos .f-ri{fill:var(--li)} .colores .manos .f-pu{fill:var(--pu)}
+.manos .activo{stroke:var(--acento);stroke-width:6}
+
+/* Ventanas */
+.velo{position:fixed;inset:0;background:rgba(10,20,35,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:10}
+.caja{background:var(--panel);border-radius:22px;padding:28px;max-width:460px;width:100%;text-align:center;max-height:90vh;overflow:auto}
+.caja .estrellas{font-size:52px;color:var(--estrella);letter-spacing:6px;margin:6px 0}
+.cifras{display:flex;justify-content:space-around;margin:16px 0}
+.cifras div{display:flex;flex-direction:column}
+.cifras b{font-size:28px}
+.record{background:#111;color:#ffd700;font-family:"Courier New",monospace;font-weight:700;letter-spacing:2px;padding:8px;border-radius:10px;margin:10px 0;animation:parpadeo 1s steps(2) infinite}
+.opcion{display:flex;align-items:center;gap:10px;text-align:left;padding:10px 0;border-bottom:1px solid var(--borde);cursor:pointer}
+.opcion input{width:20px;height:20px}
+.opcion small{display:block;color:var(--suave)}
+.acerca{margin-top:16px;padding-top:14px;border-top:1px solid var(--borde);font-size:14px;color:var(--suave);line-height:1.7}
+.acerca a{color:var(--acento)}
+.lista-docente{text-align:left;margin:12px 0}
+.lista-docente div{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--borde)}
+.lista-docente span.n{flex:1}
+.lista-docente button{padding:4px 10px;font-size:14px}
+
+/* Juego */
+#zona{position:relative;height:430px;overflow:hidden;border-radius:16px;border:2px solid var(--borde);background:linear-gradient(var(--panel),var(--fondo))}
+.gota{position:absolute;padding:6px 12px;border-radius:14px;background:var(--acento);color:#fff;font-family:Consolas,monospace;font-size:26px;font-weight:700;white-space:nowrap;box-shadow:0 3px 8px rgba(0,0,0,.15)}
+.gota .ya{opacity:.45}
+.gota.objetivo{background:#f08c00}
+.gota.pum{animation:pum .3s forwards}
+@keyframes pum{to{transform:scale(1.8);opacity:0}}
+#zona .piso{position:absolute;left:0;right:0;bottom:0;height:6px;background:var(--mal);opacity:.5}
+.vidas{font-size:22px}
+
+/* Salón de la fama (estilo arcade) */
+.arcade{background:#05050f;border-radius:22px;padding:26px 20px 30px;color:#e6e6e6;font-family:"Courier New",Consolas,monospace;font-weight:700;text-transform:uppercase;position:relative;overflow:hidden;border:4px solid #2b2b6b;box-shadow:0 0 30px rgba(80,80,255,.35) inset}
+.arcade::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(transparent 0 2px,rgba(0,0,0,.35) 2px 4px)}
+.arc-titulo{text-align:center;font-size:38px;color:#ffd700;letter-spacing:4px;text-shadow:0 0 6px #ff9900,0 0 18px #ff5500}
+.arc-sub{text-align:center;color:#00e5ff;letter-spacing:3px;margin:6px 0 14px;text-shadow:0 0 8px #00e5ff;font-size:20px}
+.arc-tabs{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:16px}
+.arc-tabs button{background:transparent;border:2px solid #3a3a7a;color:#8888cc;font-family:inherit;font-size:13px;padding:6px 10px;border-radius:6px;letter-spacing:1px;text-transform:uppercase}
+.arc-tabs button.sel{border-color:#ff2bd6;color:#ff2bd6;text-shadow:0 0 8px #ff2bd6}
+.arc-cab,.arc-fila{display:grid;grid-template-columns:70px 50px 1fr auto;gap:10px;align-items:center;max-width:640px;margin:0 auto;padding:5px 10px;font-size:22px;letter-spacing:2px}
+.arc-cab{color:#ff2bd6;font-size:15px;text-shadow:0 0 6px #ff2bd6}
+.arc-fila{opacity:0;animation:entra .3s forwards;color:#39ff14;text-shadow:0 0 6px #39ff14}
+.arc-fila:nth-child(2){color:#ffd700;text-shadow:0 0 8px #ffaa00;font-size:26px}
+.arc-fila:nth-child(3){color:#e0e0ff;text-shadow:0 0 8px #aab}
+.arc-fila:nth-child(4){color:#ff9f5a;text-shadow:0 0 8px #ff7a1a}
+.arc-fila .av{font-size:24px;text-shadow:none}
+.arc-fila .val{text-align:right}
+.arc-fila.yo{background:rgba(255,43,214,.15);border-radius:6px;animation:entra .3s forwards,parpadeo 1.2s steps(2) .5s infinite}
+.arc-vacio{text-align:center;color:#8888cc;padding:30px 0;font-size:20px;letter-spacing:2px}
+.arc-pie{text-align:center;margin-top:18px;color:#00e5ff;letter-spacing:3px;animation:parpadeo 1.2s steps(2) infinite}
+@keyframes entra{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:none}}
+@keyframes parpadeo{50%{opacity:.35}}
+
+/* Cómo jugar */
+.ayuda-cab{text-align:center;margin-bottom:10px}
+.ayuda-cab h2{font-size:30px}
+.pasos{list-style:none;padding:0;margin:0;display:grid;gap:12px}
+.pasos li{display:flex;gap:16px;align-items:flex-start;background:var(--panel);border:2px solid var(--borde);border-radius:16px;padding:14px 18px;line-height:1.55}
+.pasos li b:first-child{display:block;font-size:19px;margin-bottom:2px}
+.pasos .n{flex:none;width:40px;height:40px;border-radius:50%;background:var(--acento);color:#fff;font-weight:800;font-size:19px;display:flex;align-items:center;justify-content:center}
+.reglas{margin-top:18px;line-height:1.6}
+.reglas h3{margin:6px 0}
+.reglas ul{margin:4px 0 14px;padding-left:22px}
+
+/* Atajos */
+kbd{display:inline-block;min-width:30px;padding:3px 8px;border-radius:7px;border:1px solid var(--tecla-borde);border-bottom-width:3px;background:var(--tecla);font-family:inherit;font-weight:700;font-size:15px;text-align:center}
+.mas{color:var(--suave);margin:0 3px}
+.grupo-atajos{margin-top:22px}
+.atajo{background:var(--panel);border:2px solid var(--borde);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;transition:border-color .2s,transform .2s}
+.atajo .nom{font-weight:700}
+.atajo .que{color:var(--suave);font-size:15px}
+.atajo .probar{font-size:13px;color:var(--bien);font-weight:600}
+.atajo.probado{border-color:var(--bien);transform:scale(1.03)}
+.atajo.probado .nom::after{content:"  ✅ ¡Funciona!"}
+.atajos-teclado{position:sticky;top:0;background:var(--fondo);padding:8px 0;z-index:2}
+#retoAtajos{text-align:center}
+#retoAtajos .pregunta{font-size:36px;font-weight:800;margin:20px 0 6px}
+#retoAtajos .respuesta{min-height:44px;font-size:20px;margin:10px 0}
+
+@media (max-width:760px){
+  .tecla{width:30px;height:36px;font-size:13px;border-radius:6px}
+  .tecla .sup,.tecla .agr{display:none}
+  .fila{gap:3px} .teclado{gap:3px}
+  #texto{font-size:22px}
+  .manos{gap:20px} .manos svg{width:120px}
+  .arc-cab,.arc-fila{grid-template-columns:44px 34px 1fr auto;font-size:16px}
+  .arc-titulo{font-size:26px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>😊 Mecanografía Feliz</h1>
+  <span class="chip oculto" id="chipJugador"></span>
+  <nav>
+    <button class="sec" id="btnMenu">🏠 Inicio</button>
+    <button class="sec" id="btnFama">🏆 Récords</button>
+    <button class="sec" id="btnAyuda">📖 Cómo jugar</button>
+    <button class="sec" id="btnAtajos">⌨️ Atajos</button>
+    <button class="sec" id="btnAjustes" title="Ajustes">⚙️ Ajustes</button>
+    <button class="sec soloJugador" id="btnCambiar">👤 Cambiar</button>
+  </nav>
+</header>
+
+<main>
+  <!-- 1. Elegir o crear jugador -->
+  <section id="pJugador">
+    <div class="panel centro" id="eligeJugador">
+      <h2>¿Quién va a jugar?</h2>
+      <input id="buscarJugador" class="oculto" placeholder="🔍 Busca tu alias" style="width:100%;max-width:340px">
+      <div class="jugadores" id="listaJugadores"></div>
+      <button id="btnNuevoJugador">➕ Nuevo jugador</button>
+      <p class="suave" style="margin-top:14px">¿Primera vez? <button class="sec" id="btnAyudaInicio" style="padding:4px 12px">📖 Mira cómo se juega</button></p>
+    </div>
+    <div class="panel centro oculto" id="formJugador">
+      <h2>Crea tu jugador</h2>
+      <p class="suave" style="margin:-4px 0 12px">¿Primera vez? <button class="sec" id="btnAyudaForm" style="padding:4px 12px">📖 Mira cómo se juega</button></p>
+      <div id="vistaPrevia" class="avatar grande"></div>
+      <input id="alias" maxlength="16" placeholder="Tu alias (ej: RayoVeloz)" autocomplete="off" style="width:100%;max-width:340px;text-align:center;font-size:20px">
+      <p class="suave" style="margin:14px 0 0">Elige tu avatar</p>
+      <div class="elegir" id="avatares"></div>
+      <p class="suave" style="margin:0">Elige tu color</p>
+      <div class="elegir colores" id="colores"></div>
+      <div class="error" id="errorAlias"></div>
+      <div class="botones">
+        <button id="btnCrear">¡Listo, a jugar!</button>
+        <button class="sec" id="btnVolverJugadores">Volver</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Menú -->
+  <section id="pMenu" class="oculto">
+    <div class="resumen panel">
+      <span id="menuAvatar" class="avatar grande"></span>
+      <div><div class="suave">Estrellas ganadas</div><div class="grande" id="totalEstrellas">0</div></div>
+      <div style="flex:1;min-width:220px" class="suave">
+        <b style="color:var(--texto)">Consejo:</b> pon los dedos en la <b>fila guía</b>:
+        izquierda en <b>A S D F</b>, derecha en <b>J K L Ñ</b>. Las teclas F y J tienen una rayita para encontrarlas sin mirar.
+      </div>
+    </div>
+    <h3 class="seccion">📚 Lecciones</h3>
+    <div class="grid" id="gridLecciones"></div>
+    <h3 class="seccion">🏁 Competencia <span class="suave" style="font-size:15px;font-weight:normal">— tus mejores marcas van al Salón de la Fama</span></h3>
+    <div class="grid">
+      <button class="tarjeta extra" id="btnDesafio"><span class="tit">⏱️ Desafío de 1 minuto</span><span class="suave">¿Cuántas palabras escribes en un minuto?</span><span class="suave" data-record="desafio"></span></button>
+      <button class="tarjeta extra" data-juego="facil"><span class="tit">🌧️ Lluvia de letras (fácil)</span><span class="suave">Solo la fila guía</span><span class="suave" data-record="lluvia_facil"></span></button>
+      <button class="tarjeta extra" data-juego="medio"><span class="tit">🌧️ Lluvia de letras (medio)</span><span class="suave">Todas las letras</span><span class="suave" data-record="lluvia_medio"></span></button>
+      <button class="tarjeta extra" data-juego="dificil"><span class="tit">🌧️ Lluvia de palabras</span><span class="suave">Palabras completas</span><span class="suave" data-record="lluvia_dificil"></span></button>
+      <button class="tarjeta extra" id="btnRetoMenu"><span class="tit">⚡ Reto de atajos</span><span class="suave">Copiar, pegar, guardar… ¡rápido!</span><span class="suave" data-record="atajos"></span></button>
+    </div>
+    <h3 class="seccion">🧰 Extras</h3>
+    <div class="grid">
+      <button class="tarjeta extra" id="btnAyudaMenu"><span class="tit">📖 Cómo jugar</span><span class="suave">Instrucciones y consejos</span></button>
+      <button class="tarjeta extra" id="btnVerAtajos"><span class="tit">⌨️ Atajos del teclado</span><span class="suave">Combinaciones útiles y para qué sirven</span></button>
+      <button class="tarjeta extra" id="btnLibre"><span class="tit">📝 Texto libre</span><span class="suave">El profe pega su propio texto</span></button>
+    </div>
+  </section>
+
+  <!-- 3. Práctica -->
+  <section id="pPractica" class="oculto">
+    <div class="barra">
+      <span class="titulo" id="tituloLeccion"></span>
+      <div class="datos">
+        <span id="reloj" class="oculto">⏱️ <b id="dReloj">60</b> s</span>
+        <span>Velocidad <b id="dPpm">0</b> ppm</span>
+        <span>Precisión <b id="dPrec">100</b>%</span>
+        <span id="avance">Avance <b id="dAvance">0</b>%</span>
+      </div>
+      <button class="sec" id="btnSinMirar" title="Esconde el teclado de la pantalla">🙈 Sin mirar: NO</button>
+      <button class="sec" id="btnReiniciar">↺ Reiniciar</button>
+    </div>
+    <div id="avisoMayus" class="aviso oculto">⚠️ Tienes <b>Bloq Mayús</b> activado. Apágalo para escribir en minúsculas.</div>
+    <div id="texto"></div>
+    <div class="empieza" id="empieza">Empieza a escribir cuando quieras. El reloj arranca con la primera tecla.</div>
+    <div class="pista" id="pista"></div>
+    <div id="zonaTeclado">
+      <div class="teclado" id="tecladoPractica"></div>
+      <div class="manos" id="manos"></div>
+    </div>
+  </section>
+
+  <!-- 4. Juego -->
+  <section id="pJuego" class="oculto">
+    <div class="barra">
+      <span class="titulo" id="tituloJuego">🌧️ Lluvia de letras</span>
+      <div class="datos">
+        <span>Puntos <b id="jPuntos">0</b></span>
+        <span>Nivel <b id="jNivel">1</b></span>
+        <span class="vidas" id="jVidas"></span>
+      </div>
+    </div>
+    <div id="zona"><div class="piso"></div></div>
+    <p class="empieza">Escribe las letras antes de que toquen el suelo. Si se te escapan 3, termina el juego.</p>
+  </section>
+
+  <!-- 5. Salón de la fama -->
+  <section id="pFama" class="oculto">
+    <div class="arcade">
+      <div class="arc-titulo">★ Salón de la Fama ★</div>
+      <div class="arc-sub" id="famaSub"></div>
+      <div class="arc-tabs" id="famaTabs"></div>
+      <div id="famaTabla"></div>
+      <div class="arc-pie">¿Podrás superarlos?</div>
+    </div>
+    <div class="botones"><button class="sec" id="btnDocente">🔧 Docente</button></div>
+  </section>
+
+  <!-- 7. Cómo jugar -->
+  <section id="pAyuda" class="oculto">
+    <div class="ayuda-cab">
+      <div style="font-size:56px">😊⌨️</div>
+      <h2>¿Cómo se juega?</h2>
+      <p class="suave">Aprender a escribir con los diez dedos es como aprender a montar bicicleta: al principio vas lento, pero con práctica vuelas. ¡Sigue estos pasos!</p>
+    </div>
+    <ol class="pasos">
+      <li><span class="n">1</span><div><b>🪑 Siéntate bien</b>
+        Espalda recta, pies en el piso y la pantalla frente a tus ojos. Las muñecas van en el aire, sin apoyarlas en la mesa.</div></li>
+      <li><span class="n">2</span><div><b>👤 Crea tu jugador</b>
+        Inventa un <b>alias</b> divertido, por ejemplo <i>RayoVeloz</i>. No pongas tu nombre y apellido completos. Usa <b>siempre el mismo alias</b> para no perder tus estrellas.</div></li>
+      <li><span class="n">3</span><div><b>🏠 Pon los dedos en la fila guía</b>
+        Mano izquierda en <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> <kbd>F</kbd>, mano derecha en <kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd> <kbd>Ñ</kbd> y los pulgares sobre el <kbd>Espacio</kbd>.
+        Las teclas <kbd>F</kbd> y <kbd>J</kbd> tienen una <b>rayita</b>: tócalas para encontrarlas sin mirar. Después de cada tecla, el dedo vuelve a su casa.</div></li>
+      <li><span class="n">4</span><div><b>👀 Mira la pantalla, no tus manos</b>
+        La tecla que sigue se ilumina en <b style="color:var(--acento)">azul</b>, el dibujo de las manos marca qué dedo usar y abajo del texto aparece una pista, por ejemplo <i>"Pulsa J con el índice derecho"</i>. Cada dedo tiene su color.</div></li>
+      <li><span class="n">5</span><div><b>❌ Si te equivocas, no pasa nada</b>
+        La letra se pone <b style="color:var(--mal)">roja</b> y el cursor te espera. Pulsa la tecla correcta y sigue. No hace falta borrar.</div></li>
+      <li><span class="n">6</span><div><b>⭐ Gana estrellas</b>
+        Al terminar una lección ganas de 1 a 3 estrellas según tu <b>precisión</b>: ⭐⭐⭐ con 95 % o más, ⭐⭐ con 85 % o más y ⭐ por terminar.
+        <b>Primero aprende a no equivocarte, después la velocidad llega sola.</b> Haz las lecciones en orden, desde la 1.</div></li>
+      <li><span class="n">7</span><div><b>🔠 Mayúsculas</b>
+        Mantén apretada la tecla <kbd>Mayús</kbd> con el meñique de la <b>otra mano</b> y pulsa la letra. Para la <kbd>A</kbd> (mano izquierda), usa la <kbd>Mayús</kbd> derecha.</div></li>
+      <li><span class="n">8</span><div><b>✏️ Acentos (á, é, í, ó, ú)</b>
+        Son dos pasos: primero la tecla <kbd>´</kbd> (no aparece nada, ¡es normal!) y después la vocal.</div></li>
+      <li><span class="n">9</span><div><b>🏁 Compite en el Salón de la Fama</b>
+        En el <b>Desafío de 1 minuto</b>, la <b>Lluvia de letras</b> y el <b>Reto de atajos</b>, tu mejor marca entra en la tabla de 🏆 Récords. ¿Llegarás al primer lugar?</div></li>
+      <li><span class="n">10</span><div><b>🙈 Modo sin mirar</b>
+        Cuando ya te sepas el teclado, actívalo en ⚙️ Ajustes o con el botón 🙈 de la lección. El teclado de la pantalla se esconde. Si fallas 3 veces seguidas la misma letra, la ayuda vuelve.</div></li>
+    </ol>
+    <div class="panel reglas">
+      <h3>🤝 Reglas del juego limpio</h3>
+      <ul>
+        <li>Usa solo <b>tu</b> jugador. No juegues con el alias de un compañero.</li>
+        <li>Elige un alias respetuoso. El profe puede borrar los que no lo sean.</li>
+        <li>Celebra los récords de los demás: ¡la próxima vez puedes ser tú!</li>
+      </ul>
+      <h3>📚 Palabras que vas a ver</h3>
+      <ul>
+        <li><b>ppm</b> = <b>palabras por minuto</b>. Mide qué tan rápido escribes. Al empezar es normal tener 5 a 10 ppm; con práctica se llega a 20 o 30.</li>
+        <li><b>Precisión</b> = cuántas teclas pulsaste bien. 100 % es no fallar ninguna.</li>
+        <li><b>Fila guía</b> = la fila de <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> <kbd>F</kbd> … <kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd> <kbd>Ñ</kbd>, la "casa" de tus dedos.</li>
+      </ul>
+      <p>💡 <b>Consejo:</b> practicar <b>10 minutos todos los días</b> funciona mejor que una hora una vez a la semana.</p>
+    </div>
+    <div class="botones"><button id="btnAyudaListo" style="font-size:20px;padding:12px 28px">¡A practicar! 🚀</button></div>
+  </section>
+
+  <!-- 6. Atajos del teclado -->
+  <section id="pAtajos" class="oculto">
+    <div class="barra">
+      <span class="titulo">⌨️ Atajos del teclado</span>
+      <button id="btnReto">⚡ Reto de atajos (1 minuto)</button>
+    </div>
+    <div id="listaAtajos">
+      <p class="suave">Un <b>atajo</b> es una combinación de teclas que hace algo rápido, sin usar el ratón.
+        Se <b>mantiene apretada</b> la primera tecla (por ejemplo <kbd>Ctrl</kbd>) y luego se pulsa la otra.
+        Los atajos con 👆 los puedes probar aquí mismo. Toca cualquier atajo para verlo en el teclado.</p>
+      <div class="atajos-teclado"><div class="teclado" id="tecladoAtajos"></div></div>
+      <div id="atajosGrupos"></div>
+    </div>
+    <div id="retoAtajos" class="panel oculto">
+      <div class="datos" style="justify-content:center">
+        <span>⏱️ <b id="rtReloj">60</b> s</span><span>Aciertos <b id="rtPuntos">0</b></span>
+      </div>
+      <div class="suave" style="margin-top:16px">¿Qué atajo sirve para…?</div>
+      <div class="pregunta" id="rtPregunta"></div>
+      <div class="suave" id="rtQue"></div>
+      <div class="respuesta" id="rtRespuesta"></div>
+      <div class="teclado" id="tecladoReto"></div>
+      <div class="botones"><button class="sec" id="rtSalir">Salir del reto</button></div>
+    </div>
+  </section>
+</main>
+
+<!-- Resultado de una lección -->
+<div class="velo oculto" id="vResultado">
+  <div class="caja">
+    <h2 id="rTitulo">¡Muy bien!</h2>
+    <div class="estrellas" id="rEstrellas"></div>
+    <div class="cifras">
+      <div><b id="rPpm">0</b><span class="suave">palabras/min</span></div>
+      <div><b id="rPrec">0%</b><span class="suave">precisión</span></div>
+      <div><b id="rTiempo">0s</b><span class="suave">tiempo</span></div>
+    </div>
+    <div class="record oculto" id="rRecord"></div>
+    <p class="suave" id="rMensaje"></p>
+    <div class="botones">
+      <button class="sec" id="rRepetir">↺ Repetir</button>
+      <button id="rSiguiente">Siguiente ▶</button>
+      <button class="sec" id="rFama">🏆 Récords</button>
+      <button class="sec" id="rMenu">🏠 Menú</button>
+    </div>
+  </div>
+</div>
+
+<!-- Fin de un juego o reto -->
+<div class="velo oculto" id="vFin">
+  <div class="caja">
+    <h2 id="fTitulo">¡Fin del juego!</h2>
+    <div style="font-size:48px" id="fEmoji">🌧️</div>
+    <p>Hiciste <b id="fPuntos">0</b> <span id="fUnidad">puntos</span>.</p>
+    <div class="record oculto" id="fRecord"></div>
+    <p class="suave" id="fMensaje"></p>
+    <div class="botones">
+      <button id="fOtra">Jugar otra vez</button>
+      <button class="sec" id="fFama">🏆 Récords</button>
+      <button class="sec" id="fMenu">🏠 Menú</button>
+    </div>
+  </div>
+</div>
+
+<!-- Texto libre -->
+<div class="velo oculto" id="vLibre">
+  <div class="caja" style="max-width:600px">
+    <h2>📝 Texto libre</h2>
+    <p class="suave">Pega o escribe el texto que quieres practicar.</p>
+    <textarea id="libreTexto" rows="6" style="width:100%"></textarea>
+    <div class="botones">
+      <button id="libreOk">Practicar</button>
+      <button class="sec" id="libreCancelar">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Ajustes -->
+<div class="velo oculto" id="vAjustes">
+  <div class="caja">
+    <h2>⚙️ Ajustes</h2>
+    <label class="opcion"><input type="checkbox" id="optSonido"><span>🔊 Sonido</span></label>
+    <label class="opcion"><input type="checkbox" id="optColores"><span>🎨 Colores de dedos<small>Cada dedo tiene su color en el teclado.</small></span></label>
+    <label class="opcion"><input type="checkbox" id="optSinMirar"><span>🙈 Modo sin mirar<small>Esconde el teclado y las pistas. Si te equivocas 3 veces seguidas en la misma letra, la ayuda aparece.</small></span></label>
+    <div class="opcion" style="cursor:default"><span style="flex:1">⌨️ Teclado<small>Mira tu teclado: si tiene la tecla <b>Ç</b>, es de España.</small></span>
+      <select id="optDistribucion"><option value="latam">Latinoamérica</option><option value="es">España</option></select></div>
+    <div class="acerca">
+      <b>Mecanografía Feliz</b> · herramienta educativa libre y gratuita<br>
+      Hecha por <b>Leonardo Caripa</b><br>
+      ✉️ <a href="mailto:leonardocaripadev@gmail.com">leonardocaripadev@gmail.com</a><br>
+      <a href="https://github.com/lans757">github.com/lans757</a> · <a href="https://github.com/caripadev">github.com/caripadev</a>
+    </div>
+    <div class="botones"><button id="ajustesOk">Listo</button></div>
+  </div>
+</div>
+
+<!-- Docente -->
+<div class="velo oculto" id="vDocente">
+  <div class="caja" style="max-width:520px">
+    <h2>🔧 Zona del docente</h2>
+    <div id="docPin">
+      <p class="suave" id="docPinTexto"></p>
+      <input id="docPinInput" type="password" inputmode="numeric" maxlength="8" style="text-align:center;font-size:22px;width:180px">
+      <div class="error" id="docPinError"></div>
+      <div class="botones"><button id="docPinOk">Entrar</button><button class="sec" id="docCerrar1">Cerrar</button></div>
+    </div>
+    <div id="docPanel" class="oculto">
+      <p class="suave">Aquí puedes borrar jugadores (por ejemplo, alias de prueba o inapropiados). Se borran también sus récords.</p>
+      <div class="lista-docente" id="docLista"></div>
+      <div class="botones"><button class="sec" id="docCerrar2">Cerrar</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+let ES_APP = false; // pasa a true dentro del .exe (Neutralino); se decide al arrancar
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+
+/* =========================================================
+   1. TECLADOS
+   Las posiciones físicas (y qué dedo usa cada una) son iguales
+   en los dos teclados; lo que cambia es qué símbolo trae cada tecla.
+   Dedos: lp/lr/lm/li = meñique/anular/medio/índice izquierdo
+          ri/rm/rr/rp = índice/medio/anular/meñique derecho, pu = pulgar
+   ========================================================= */
+const DEDOS_POS = [
+  ["lp","lp","lr","lm","li","li","ri","ri","rm","rr","rp","rp","rp"],
+  ["lp","lr","lm","li","li","ri","ri","rm","rr","rp","rp","rp"],
+  ["lp","lr","lm","li","li","ri","ri","rm","rr","rp","rp","rp"],
+  ["lp","lp","lr","lm","li","li","ri","ri","rm","rr","rp"]
+];
+const letrasDe = s => [...s].map(c => [c, c.toUpperCase()]);
+// cada tecla: [normal, con Mayús, con AltGr]
+const DISTRIBUCIONES = {
+  latam: [
+    [["|","°","¬"],["1","!"],["2","\""],["3","#"],["4","$"],["5","%"],["6","&"],["7","/"],["8","("],["9",")"],["0","="],["'","?","\\"],["¿","¡"]],
+    [["q","Q","@"], ...letrasDe("wertyuiop"), ["´","¨"], ["+","*"]],
+    [...letrasDe("asdfghjklñ"), ["{","["], ["}","]"]],
+    [["<",">"], ...letrasDe("zxcvbnm"), [",",";"], [".",":"], ["-","_"]]
+  ],
+  es: [
+    [["º","ª","\\"],["1","!","|"],["2","\"","@"],["3","·","#"],["4","$","~"],["5","%","€"],["6","&","¬"],["7","/"],["8","("],["9",")"],["0","="],["'","?"],["¡","¿"]],
+    [...letrasDe("qwertyuiop"), ["`","^","["], ["+","*","]"]],
+    [...letrasDe("asdfghjklñ"), ["´","¨","{"], ["ç","Ç","}"]],
+    [["<",">"], ...letrasDe("zxcvbnm"), [",",";"], [".",":"], ["-","_"]]
+  ]
+};
+const TECLAS_ANTES = [null,
+  {nombre:"Tab",ancho:72,id:"tab",dedo:"lp"},
+  {nombre:"Bloq Mayús",ancho:86,id:"bloqmayus",dedo:"lp"},
+  {nombre:"Mayús",ancho:62,id:"shiftIzq",dedo:"lp"}];
+const TECLAS_DESPUES = [
+  {nombre:"Borrar",ancho:90,id:"retroceso",dedo:"rp"},
+  {nombre:"Enter",ancho:68,id:"enter",dedo:"rp"},
+  {nombre:"",ancho:54,id:"enter",dedo:"rp"},
+  {nombre:"Mayús",ancho:136,id:"shiftDer",dedo:"rp"}];
+const FILA_ESPACIO = [
+  {nombre:"Ctrl",ancho:70,id:"ctrl"},{nombre:"⊞ Win",ancho:56,id:"win"},{nombre:"Alt",ancho:62,id:"alt"},
+  {nombre:"Espacio",ancho:406,id:"espacio",dedo:"pu"},
+  {nombre:"AltGr",ancho:62,id:"altgr",dedo:"pu"},{nombre:"⊞",ancho:56,id:"win2"},{nombre:"Ctrl",ancho:70,id:"ctrl2"}];
+const NOMBRE_DEDO = {lp:"meñique izquierdo",lr:"anular izquierdo",lm:"dedo medio izquierdo",li:"índice izquierdo",
+  ri:"índice derecho",rm:"dedo medio derecho",rr:"anular derecho",rp:"meñique derecho",pu:"pulgar"};
+const GUIA = "asdfjklñ";
+const ACENTOS = {"á":"a","é":"e","í":"i","ó":"o","ú":"u","Á":"A","É":"E","Í":"I","Ó":"O","Ú":"U"};
+
+// MAPA: carácter -> {id de la tecla, dedo, si necesita Mayús o AltGr}
+let MAPA = {};
+function construirMapa() {
+  MAPA = {};
+  const filas = DISTRIBUCIONES[ajustes().distribucion] || DISTRIBUCIONES.latam;
+  // primero los de AltGr, para que si un símbolo existe sin AltGr gane esa forma (más fácil)
+  filas.forEach((fila, f) => fila.forEach((t, i) => { if (t[2]) MAPA[t[2]] = {id:"k-"+t[0], dedo:DEDOS_POS[f][i], altgr:true}; }));
+  filas.forEach((fila, f) => fila.forEach((t, i) => {
+    MAPA[t[1]] = {id:"k-"+t[0], dedo:DEDOS_POS[f][i], shift:true};
+    MAPA[t[0]] = {id:"k-"+t[0], dedo:DEDOS_POS[f][i]};
+  }));
+  MAPA[" "] = {id:"espacio", dedo:"pu"};
+}
+/* Qué teclas hay que pulsar para un carácter (las vocales con tilde son dos pasos). */
+function pasosPara(ch) {
+  if (ACENTOS[ch]) return [{id:"k-´", dedo:MAPA["´"].dedo, muerta:true}, MAPA[ACENTOS[ch]]];
+  return MAPA[ch] ? [MAPA[ch]] : [];
+}
+
+/* =========================================================
+   2. CONTENIDO
+   ========================================================= */
+const PALABRAS = ("a la las sal ala alas sala salsa falda faldas gala hada hadas ja jala da " +
+  "lee leal idea ideas sede seda fila filas hija hijas dedal silla sillas lija jefe kilo " +
+  "rueda ruido rata risa risas uva uvas gris jugar sur luna lugar regla fruta frutas dulce aula tarea tareas " +
+  "tigre tierra letra letras dura duro ruge rugir hilera ira " +
+  "yate ya yo ayer playa rayo tuyo tuya tres tren tarde gato gatos tapa tela " +
+  "perro perros pato oso osos sopa pelota papel piso pollo ropa osito loro oro foto pista patio pupitre profe prueba pera pie pies " +
+  "cine cama casa cena cuento canto noche nube nido ocho cinco once nada nadar pan pino cono conejo cocina coco " +
+  "mano mesa mono mapa mar verde vaca vela vaso vida ver viento nueve nuevo mundo montaña niño niña sueño año uña " +
+  "barco bote bola burro beber queso que quien quince kiwi web wifi bebe bueno buena " +
+  "zapato zorro taza lazo examen taxi diez luz voz arroz pizarra tiza " +
+  "escuela recreo cantina empanada arepa cuaderno borrador maestra maestro amigo amiga juego bandera colores merienda mochila tijera libro " +
+  "clase grupo equipo partido cometa trompo metras pintura dibujo planeta estrella").split(/\s+/);
+
+const FRASES = {
+  puntos: ["el gato come, el perro juega.","la maestra lee un cuento.","hoy hay recreo largo.","mi amiga trae arepas, yo traigo jugo.",
+    "el sol sale, la luna se va.","la pelota es roja, la mesa es verde.","vamos al patio, luego a clase.","el loro canta, el pato nada."],
+  mayus: ["Ana come arepa.","Luis lleva su mochila.","Caracas es grande.","El lunes hay examen.","Pedro juega metras.",
+    "Mi perro se llama Toby.","La profe Carmen es buena.","Venezuela tiene playas lindas.","Sara y Juan son amigos."],
+  acentos: ["Mamá prepara café.","El árbol está en el jardín.","Sofía corrió muy rápido.","El ratón comió queso.","Mi canción favorita es corta.",
+    "Papá lavó el camión.","Tomás está en sexto grado.","El sábado vamos a la playa.","El avión pasó sobre la montaña."],
+  signos: ["¿Cómo estás?","¡Qué bueno!","¿Vamos al recreo?","¡Ganamos el partido!","¿Quién trajo la pelota?",
+    "¡Feliz cumpleaños!","¿Dónde está mi lápiz?","¡Cuidado con el charco!","¿Qué hay de merienda?"],
+  numeros: ["Tengo 12 años.","Saqué 18 en el examen.","Somos 30 en el salón.","La empanada cuesta 5 bolívares.",
+    "El recreo es a las 10.","Mi casa es la número 47.","Faltan 3 días para el viernes.","Leí 25 páginas hoy."],
+  simbolos: ["( )","()","x = 5;","a < b","b > a","\"hola\"","{ }","[ ]","lista[0]","suma = a + b;","x * 2","y / 3",
+    "(a + b) * c","edad >= 12","nota <= 20","\"Hola, mundo\";","{ x = 1; }","a - b","n = n + 1;","total = 3 * (2 + 1);"],
+  pseint: ["Escribir \"Hola mundo\";","Leer edad;","Si nota >= 10 Entonces","suma <- suma + 1;","Para i <- 1 Hasta 10 Hacer",
+    "Mientras vidas > 0 Hacer","Definir nombre Como Caracter;","total <- precio * cantidad;","FinSi","promedio <- suma / 3;",
+    "Escribir \"Tu nota es: \", nota;","Si edad < 12 Entonces","Repetir","Hasta Que respuesta = \"si\""],
+  cole: ["Hoy en la cantina venden empanadas de queso.","En el recreo jugamos fútbol en la cancha.","La maestra escribió la tarea en la pizarra.",
+    "Mi cuaderno de matemática tiene forro azul.","Mañana tenemos prueba de ciencias.","El viernes hay acto cultural en el patio.",
+    "Me gusta programar con PSeInt.","Saqué buena nota porque estudié mucho."],
+  desafio: ["Había una vez un gato llamado Pelusa que vivía en la escuela. Todos los días esperaba el recreo para pedir un pedacito de empanada.",
+    "Un algoritmo es una lista de pasos para resolver un problema. Para hacer una arepa también seguimos un algoritmo: mezclar, amasar y cocinar.",
+    "El sábado fuimos a la playa con mis primos. Hicimos un castillo de arena enorme, pero una ola se lo llevó. ¡Nos reímos mucho!",
+    "Las computadoras no piensan solas: siguen instrucciones. Por eso un buen programador escribe pasos claros y en el orden correcto."]
+};
+
+// tipo: "letras" (combinaciones + palabras), "palabras", o el nombre de un grupo de FRASES
+const LECCIONES = [
+  {id:"asdf", titulo:"Mano izquierda en casa", nuevas:"asdf", tipo:"letras"},
+  {id:"jklñ", titulo:"Mano derecha en casa", nuevas:"jklñ", tipo:"letras"},
+  {id:"guia", titulo:"Toda la fila guía", nuevas:"", tipo:"letras"},
+  {id:"gh", titulo:"Las del centro: G y H", nuevas:"gh", tipo:"letras"},
+  {id:"ei", titulo:"Subimos: E e I", nuevas:"ei", tipo:"letras"},
+  {id:"ru", titulo:"R y U", nuevas:"ru", tipo:"letras"},
+  {id:"ty", titulo:"T y Y", nuevas:"ty", tipo:"letras"},
+  {id:"op", titulo:"O y P", nuevas:"op", tipo:"letras"},
+  {id:"cn", titulo:"Bajamos: C y N", nuevas:"cn", tipo:"letras"},
+  {id:"mv", titulo:"M y V", nuevas:"mv", tipo:"letras"},
+  {id:"bwq", titulo:"B, W y Q", nuevas:"bwq", tipo:"letras"},
+  {id:"xz", titulo:"X y Z", nuevas:"xz", tipo:"letras"},
+  {id:"palabras", titulo:"Palabras de todo el teclado", nuevas:"", tipo:"palabras"},
+  {id:"puntos", titulo:"Comas y puntos", nuevas:",.", tipo:"puntos"},
+  {id:"mayus", titulo:"Mayúsculas con Mayús (Shift)", nuevas:"", tipo:"mayus", etiqueta:"Mayús"},
+  {id:"acentos", titulo:"Acentos: á é í ó ú", nuevas:"", tipo:"acentos", etiqueta:"´ á é í ó ú"},
+  {id:"signos", titulo:"Preguntas y exclamaciones", nuevas:"", tipo:"signos", etiqueta:"¿ ? ¡ !"},
+  {id:"numeros", titulo:"Números", nuevas:"", tipo:"numeros", etiqueta:"0 1 2 3 4 5 6 7 8 9"},
+  {id:"simbolos", titulo:"💻 Símbolos de programador", nuevas:"", tipo:"simbolos", etiqueta:"( ) \" = < > ; { } [ ]", nuevo:true},
+  {id:"pseint", titulo:"💻 Código de PSeInt", nuevas:"", tipo:"pseint", etiqueta:"Escribir \"Hola\";", nuevo:true},
+  {id:"cole", titulo:"Frases del cole", nuevas:"", tipo:"cole", etiqueta:"frases"},
+  {id:"final", titulo:"🏆 Gran desafío", nuevas:"", tipo:"desafio", etiqueta:"un cuento corto"}
+];
+let acumuladas = "";
+LECCIONES.forEach(l => { acumuladas += l.nuevas; l.letras = acumuladas.replace(/[,.]/g, ""); });
+
+const azar = arr => arr[Math.floor(Math.random() * arr.length)];
+const mezclar = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const palabrasCon = letras => PALABRAS.filter(p => [...p].every(c => letras.includes(c)));
+
+function generarTexto(lec) {
+  if (lec.tipo === "letras") {
+    const nuevas = lec.nuevas || lec.letras;
+    const grupos = [];
+    for (let i = 0; i < 12; i++) {
+      let g = "";
+      const largo = 2 + Math.floor(Math.random() * 3);
+      for (let j = 0; j < largo; j++) g += Math.random() < 0.6 ? azar([...nuevas]) : azar([...lec.letras]);
+      grupos.push(g);
+    }
+    const pals = palabrasCon(lec.letras);
+    if (pals.length >= 3) for (let i = 0; i < 6; i++) grupos.push(azar(pals));
+    return grupos.join(" ");
+  }
+  if (lec.tipo === "palabras") return mezclar(PALABRAS).slice(0, 22).join(" ");
+  if (lec.tipo === "numeros") {
+    const sueltos = Array.from({length:6}, () => String(Math.floor(Math.random() * 1000)));
+    return sueltos.join(" ") + " " + mezclar(FRASES.numeros).slice(0, 3).join(" ");
+  }
+  if (lec.tipo === "simbolos") return mezclar(FRASES.simbolos).slice(0, 10).join(" ");
+  if (lec.tipo === "pseint") return mezclar(FRASES.pseint).slice(0, 5).join(" ");
+  if (lec.tipo === "desafio") return azar(FRASES.desafio);
+  return mezclar(FRASES[lec.tipo]).slice(0, 4).join(" ");
+}
+
+/* =========================================================
+   3. BASE DE DATOS
+   Un solo archivo JSON con todos los jugadores de este equipo.
+   En el .exe: %APPDATA%\MecanografiaFeliz\datos.json (+ una copia de respaldo).
+   En el navegador: localStorage.
+   ========================================================= */
+const CLAVE = "mecanografia-feliz-v1";
+const DB = {
+  datos: {version:1, ajustes:{sonido:true, colores:true, sinMirar:false, distribucion:"latam"}, pin:null, jugadores:{}},
+  ruta: null, carpeta: null, cola: Promise.resolve(),
+  async cargar() {
+    let texto = null, copia = null;
+    try {
+      if (ES_APP) {
+        this.carpeta = (await Neutralino.os.getPath("data")) + "/MecanografiaFeliz";
+        try { await Neutralino.filesystem.createDirectory(this.carpeta); } catch (e) {}
+        this.ruta = this.carpeta + "/datos.json";
+        try { texto = await Neutralino.filesystem.readFile(this.ruta); } catch (e) {}
+        try { copia = await Neutralino.filesystem.readFile(this.carpeta + "/datos-respaldo.json"); } catch (e) {}
+      } else {
+        texto = localStorage.getItem(CLAVE);
+      }
+    } catch (e) { console.error(e); }
+    const leido = this.leer(texto) || this.leer(copia);
+    if (leido) this.datos = {...this.datos, ...leido, ajustes:{...this.datos.ajustes, ...leido.ajustes}};
+    // respaldo al abrir: si algo se daña durante la sesión, queda la versión anterior
+    if (ES_APP && this.leer(texto)) try { await Neutralino.filesystem.writeFile(this.carpeta + "/datos-respaldo.json", texto); } catch (e) {}
+  },
+  leer(texto) { try { const d = JSON.parse(texto); return d && d.jugadores ? d : null; } catch (e) { return null; } },
+  guardar() {
+    const texto = JSON.stringify(this.datos);
+    // las escrituras van en fila para que nunca se pisen
+    this.cola = this.cola.then(async () => {
+      try { if (ES_APP) await Neutralino.filesystem.writeFile(this.ruta, texto); else localStorage.setItem(CLAVE, texto); }
+      catch (e) { console.error("No se pudo guardar", e); }
+    });
+    return this.cola;
+  }
+};
+const ajustes = () => DB.datos.ajustes;
+
+/* ---- Jugadores (estilo Roblox: alias + avatar, sin contraseña) ---- */
+const AVATARES = ["🐱","🐶","🦊","🐼","🐸","🦁","🐯","🐵","🦄","🐙","🐧","🐢","🦖","🐲","🦉","🐝","🚀","⚽","🎮","🌟","🍕","🎸","🤖","👾"];
+const COLORES = ["#ff8787","#ffa94d","#ffd43b","#8ce99a","#63e6be","#74c0fc","#91a7ff","#e599f7","#faa2c1","#ced4da"];
+// filtro sencillo de alias inapropiados (se compara sin tildes y cambiando 0→o, 1→i, 3→e, 4→a, 5→s)
+const PROHIBIDAS = ["puta","puto","mierda","verga","coño","cono","pendej","marico","mamaguev","culo","cabron","idiota","estupid","imbecil","huev","gonorrea","malparid","pinga","caraj","joder","sexo","nazi","hitler","fuck","shit","bitch","dick"];
+
+let jugador = null; // el jugador que está usando la computadora
+
+function normalizar(s) {
+  return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/0/g,"o").replace(/1/g,"i").replace(/3/g,"e").replace(/4/g,"a").replace(/5/g,"s").replace(/[^a-zñ]/g, "");
+}
+function buscarPorAlias(alias) {
+  const a = alias.trim().toLowerCase();
+  return Object.values(DB.datos.jugadores).find(j => j.alias.toLowerCase() === a);
+}
+function estrellasDe(j) { return Object.values(j.lecciones).reduce((s, r) => s + (r.estrellas || 0), 0); }
+const avatarHTML = (j, clase = "") => `<span class="avatar ${clase}" style="background:${esc(j.color)}">${esc(j.avatar)}</span>`;
+
+function entrar(j) {
+  jugador = j; j.visto = Date.now(); DB.guardar();
+  $("chipJugador").innerHTML = avatarHTML(j) + esc(j.alias);
+  pintarMenu();
+}
+
+/* =========================================================
+   4. SONIDOS (los genera el navegador, sin archivos)
+   ========================================================= */
+let audio = null;
+function sonar(tipo) {
+  if (!ajustes().sonido) return;
+  try {
+    audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+    const notas = {bien:[[880,.03]], mal:[[180,.15]], fin:[[523,.12],[659,.12],[784,.12],[1047,.25]], pum:[[660,.05],[990,.06]],
+      record:[[523,.1],[659,.1],[784,.1],[1047,.1],[784,.1],[1047,.3]]}[tipo];
+    let t = audio.currentTime;
+    notas.forEach(([f, d]) => {
+      const o = audio.createOscillator(), g = audio.createGain();
+      o.type = tipo === "mal" ? "square" : tipo === "record" ? "triangle" : "sine"; o.frequency.value = f;
+      g.gain.setValueAtTime(tipo === "bien" ? .04 : .12, t); g.gain.exponentialRampToValueAtTime(.001, t + d);
+      o.connect(g).connect(audio.destination); o.start(t); o.stop(t + d); t += d;
+    });
+  } catch (e) {}
+}
+
+/* =========================================================
+   5. PANTALLAS
+   ========================================================= */
+let pantalla = "pJugador";
+function mostrar(id) {
+  ["pJugador","pMenu","pPractica","pJuego","pFama","pAtajos","pAyuda"].forEach(p => $(p).classList.toggle("oculto", p !== id));
+  pantalla = id;
+  document.querySelectorAll(".soloJugador").forEach(b => b.classList.toggle("oculto", !jugador));
+  $("chipJugador").classList.toggle("oculto", !jugador);
+  if (document.activeElement) document.activeElement.blur();
+  if (id !== "pFama") clearInterval(fama.rotar);
+  window.scrollTo(0, 0);
+}
+function salirDeLoQueSea() { pararJuego(); pararReto(); clearInterval(pr.reloj); cerrarVentanas(); }
+function cerrarVentanas() { document.querySelectorAll(".velo").forEach(v => v.classList.add("oculto")); }
+const ventanaAbierta = id => !$(id).classList.contains("oculto");
+
+$("btnMenu").onclick = () => { salirDeLoQueSea(); pintarMenu(); };
+$("btnCambiar").onclick = () => { salirDeLoQueSea(); jugador = null; pintarJugadores(); };
+$("btnFama").onclick = () => { salirDeLoQueSea(); pintarFama(); };
+$("btnAtajos").onclick = () => { salirDeLoQueSea(); pintarAtajos(); };
+function verAyuda() { salirDeLoQueSea(); mostrar("pAyuda"); }
+$("btnAyuda").onclick = $("btnAyudaInicio").onclick = $("btnAyudaForm").onclick = $("btnAyudaMenu").onclick = verAyuda;
+$("btnAyudaListo").onclick = () => pintarMenu();
+$("btnAjustes").onclick = abrirAjustes;
+
+/* ---- Pantalla: elegir jugador ---- */
+function pintarJugadores() {
+  const todos = Object.values(DB.datos.jugadores).sort((a, b) => (b.visto || 0) - (a.visto || 0));
+  $("buscarJugador").classList.toggle("oculto", todos.length < 9);
+  const filtro = $("buscarJugador").value.trim().toLowerCase();
+  const lista = $("listaJugadores"); lista.innerHTML = "";
+  todos.filter(j => !filtro || j.alias.toLowerCase().includes(filtro)).slice(0, 40).forEach(j => {
+    const b = document.createElement("button"); b.className = "jugador";
+    b.innerHTML = avatarHTML(j, "grande") + `<span>${esc(j.alias)}</span><span class="mini">⭐ ${estrellasDe(j)}</span>`;
+    b.onclick = () => entrar(j);
+    lista.appendChild(b);
+  });
+  $("eligeJugador").classList.remove("oculto"); $("formJugador").classList.add("oculto");
+  mostrar("pJugador");
+  if (!todos.length) abrirFormJugador();
+}
+$("buscarJugador").oninput = pintarJugadores;
+
+const nuevo = {avatar:AVATARES[0], color:COLORES[5]};
+function abrirFormJugador() {
+  nuevo.avatar = azar(AVATARES); nuevo.color = azar(COLORES);
+  $("alias").value = ""; $("errorAlias").textContent = "";
+  $("eligeJugador").classList.add("oculto"); $("formJugador").classList.remove("oculto");
+  pintarElecciones(); $("alias").focus();
+}
+function pintarElecciones() {
+  $("avatares").innerHTML = AVATARES.map(a => `<button class="${a === nuevo.avatar ? "sel" : ""}" data-a="${a}">${a}</button>`).join("");
+  $("colores").innerHTML = COLORES.map(c => `<button class="${c === nuevo.color ? "sel" : ""}" data-c="${c}" style="background:${c}"></button>`).join("");
+  $("vistaPrevia").style.background = nuevo.color; $("vistaPrevia").textContent = nuevo.avatar;
+}
+$("avatares").onclick = e => { const b = e.target.closest("button"); if (b) { nuevo.avatar = b.dataset.a; pintarElecciones(); } };
+$("colores").onclick = e => { const b = e.target.closest("button"); if (b) { nuevo.color = b.dataset.c; pintarElecciones(); } };
+$("btnNuevoJugador").onclick = abrirFormJugador;
+$("btnVolverJugadores").onclick = pintarJugadores;
+$("alias").onkeydown = e => { if (e.key === "Enter") $("btnCrear").click(); };
+$("btnCrear").onclick = () => {
+  const alias = $("alias").value.trim().replace(/\s+/g, " ");
+  const error = msg => { $("errorAlias").textContent = msg; sonar("mal"); };
+  if (alias.length < 3) return error("Tu alias necesita al menos 3 letras.");
+  if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñÜü0-9_ ]+$/.test(alias)) return error("Usa solo letras, números, espacios o _");
+  const n = normalizar(alias);
+  if (PROHIBIDAS.some(p => n.includes(normalizar(p)))) return error("Ese alias no está permitido. Elige otro.");
+  const existe = buscarPorAlias(alias);
+  if (existe) {
+    $("errorAlias").innerHTML = `Ya existe <b>${esc(existe.alias)}</b>. Si eres tú, `;
+    const b = document.createElement("button"); b.textContent = "entra aquí"; b.style.padding = "4px 10px";
+    b.onclick = () => entrar(existe); $("errorAlias").appendChild(b);
+    return;
+  }
+  const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  const j = {id, alias, avatar:nuevo.avatar, color:nuevo.color, creado:Date.now(), visto:Date.now(), lecciones:{}, records:{}};
+  DB.datos.jugadores[id] = j; DB.guardar();
+  entrar(j);
+};
+
+/* ---- Pantalla: menú ---- */
+const dibujarEstrellas = n => "★".repeat(n) + `<span class="vacia">${"★".repeat(3 - n)}</span>`;
+function textoRecord(clave) {
+  const r = jugador.records[clave];
+  if (r === undefined) return "";
+  return clave === "desafio" ? `Tu récord: ${r.ppm} ppm` : `Tu récord: ${r} ${clave === "atajos" ? "aciertos" : "puntos"}`;
+}
+function pintarMenu() {
+  if (!jugador) return pintarJugadores();
+  cerrarVentanas();
+  const grid = $("gridLecciones"); grid.innerHTML = "";
+  LECCIONES.forEach((l, i) => {
+    const r = jugador.lecciones[l.id] || {};
+    const b = document.createElement("button"); b.className = "tarjeta";
+    const teclas = l.etiqueta || (l.nuevas ? l.nuevas.toUpperCase().split("").join(" ") : "repaso");
+    b.innerHTML = `${l.nuevo && !r.estrellas ? '<span class="nuevo">NUEVO</span>' : ""}
+      <span class="num">Lección ${i + 1}</span><span class="tit">${l.titulo}</span>
+      <span class="teclas">${esc(teclas)}</span><span class="est">${dibujarEstrellas(r.estrellas || 0)}</span>
+      ${r.ppm ? `<span class="suave" style="font-size:13px">Mejor: ${r.ppm} ppm · ${r.precision}%</span>` : ""}`;
+    b.onclick = () => empezarLeccion(i);
+    grid.appendChild(b);
+  });
+  $("menuAvatar").style.background = jugador.color; $("menuAvatar").textContent = jugador.avatar;
+  $("totalEstrellas").textContent = `${estrellasDe(jugador)} de ${LECCIONES.length * 3} ⭐`;
+  document.querySelectorAll("#pMenu [data-record]").forEach(s => s.textContent = textoRecord(s.dataset.record));
+  mostrar("pMenu");
+}
+$("btnDesafio").onclick = empezarDesafio;
+$("btnRetoMenu").onclick = () => { pintarAtajos(); empezarReto(); };
+$("btnVerAtajos").onclick = pintarAtajos;
+
+/* =========================================================
+   6. TECLADO Y MANOS EN PANTALLA
+   ========================================================= */
+function pintarTeclado(cont) {
+  cont.innerHTML = "";
+  const filas = DISTRIBUCIONES[ajustes().distribucion] || DISTRIBUCIONES.latam;
+  const especial = t => {
+    const d = document.createElement("div"); d.className = "tecla ancha"; d.textContent = t.nombre; d.style.width = t.ancho + "px";
+    d.dataset.k = t.id; if (t.dedo) d.classList.add("d-" + t.dedo);
+    return d;
+  };
+  filas.forEach((fila, f) => {
+    const div = document.createElement("div"); div.className = "fila";
+    if (TECLAS_ANTES[f]) div.appendChild(especial(TECLAS_ANTES[f]));
+    fila.forEach((t, i) => {
+      const d = document.createElement("div"); d.className = "tecla d-" + DEDOS_POS[f][i]; d.dataset.k = "k-" + t[0];
+      const esLetra = t[0].toUpperCase() !== t[0];
+      d.innerHTML = (esLetra ? esc(t[1]) : `<span class="sup">${esc(t[1])}</span>${esc(t[0])}`) + (t[2] ? `<span class="agr">${esc(t[2])}</span>` : "");
+      if (t[0] === "f" || t[0] === "j") d.classList.add("guia");
+      div.appendChild(d);
+    });
+    div.appendChild(especial(TECLAS_DESPUES[f]));
+    cont.appendChild(div);
+  });
+  const ult = document.createElement("div"); ult.className = "fila";
+  FILA_ESPACIO.forEach(t => ult.appendChild(especial(t)));
+  cont.appendChild(ult);
+}
+function pintarManos() {
+  const mano = izq => {
+    const dedos = izq ? ["lp","lr","lm","li"] : ["ri","rm","rr","rp"];
+    const altos = izq ? [70,90,100,90] : [90,100,90,70];
+    let s = `<svg viewBox="-24 0 218 200" aria-label="mano ${izq ? "izquierda" : "derecha"}">`;
+    dedos.forEach((d, i) => { const h = altos[i]; s += `<rect class="f-${d}" x="${12 + i * 34}" y="${110 - h}" width="28" height="${h + 20}" rx="14"/>`; });
+    s += izq ? `<ellipse class="f-pu" cx="158" cy="140" rx="15" ry="34" transform="rotate(-40 158 140)"/>`
+             : `<ellipse class="f-pu" cx="-2" cy="140" rx="15" ry="34" transform="rotate(40 -2 140)"/>`;
+    return s + `<rect x="8" y="110" width="140" height="80" rx="30"/></svg>`;
+  };
+  $("manos").innerHTML = mano(true) + mano(false);
+}
+function pintarTodosLosTeclados() {
+  construirMapa();
+  ["tecladoPractica","tecladoAtajos","tecladoReto"].forEach(id => pintarTeclado($(id)));
+}
+const teclasDe = (cont, id) => cont.querySelectorAll(`[data-k="${CSS.escape(id)}"]`);
+function limpiarResaltado(cont) {
+  cont.querySelectorAll(".siguiente").forEach(e => e.classList.remove("siguiente"));
+  document.querySelectorAll(".manos .activo").forEach(e => e.classList.remove("activo"));
+}
+function resaltar(cont, id, dedo) {
+  teclasDe(cont, id).forEach(k => k.classList.add("siguiente"));
+  if (dedo) document.querySelectorAll(`.manos .f-${dedo}`).forEach(e => e.classList.add("activo"));
+}
+function apretarTecla(cont, id, clase) {
+  teclasDe(cont, id).forEach(k => { k.classList.add(clase); setTimeout(() => k.classList.remove(clase), 150); });
+}
+const nombreTecla = ch => ch === " " ? "ESPACIO" : ch.toUpperCase();
+
+/* =========================================================
+   7. PRÁCTICA: lecciones, texto libre y desafío de 1 minuto
+   ========================================================= */
+const pr = {modo:null, indice:null, libre:null, texto:"", pos:0, aciertos:0, errores:0, fallos:new Set(),
+  seguidos:0, inicio:0, fin:false, muertaPulsada:false, reloj:null};
+const tPr = () => $("tecladoPractica");
+
+function empezarLeccion(i) {
+  Object.assign(pr, {modo:"leccion", indice:i});
+  prepararPractica(`Lección ${i + 1}: ${LECCIONES[i].titulo}`, generarTexto(LECCIONES[i]));
+}
+function empezarLibre(texto) {
+  Object.assign(pr, {modo:"libre", libre:texto});
+  prepararPractica("📝 Texto libre", texto);
+}
+function empezarDesafio() {
+  pr.modo = "desafio";
+  prepararPractica("⏱️ Desafío de 1 minuto", mezclar(PALABRAS).concat(mezclar(PALABRAS)).slice(0, 160).join(" "));
+}
+function prepararPractica(titulo, texto) {
+  cerrarVentanas(); clearInterval(pr.reloj);
+  Object.assign(pr, {texto, pos:0, aciertos:0, errores:0, fallos:new Set(), seguidos:0, inicio:0, fin:false, muertaPulsada:false});
+  $("tituloLeccion").textContent = titulo;
+  const caja = $("texto"); caja.innerHTML = ""; caja.scrollTop = 0;
+  // cada palabra va en un bloque para que no se corte al final de la línea
+  let bloque = null;
+  [...texto].forEach((ch, i) => {
+    const s = document.createElement("span"); s.className = "c pend"; s.id = "c" + i; s.textContent = ch;
+    if (ch === " ") { caja.appendChild(s); bloque = null; }
+    else { if (!bloque) { bloque = document.createElement("span"); bloque.className = "pal"; caja.appendChild(bloque); } bloque.appendChild(s); }
+  });
+  const desafio = pr.modo === "desafio";
+  $("reloj").classList.toggle("oculto", !desafio); $("reloj").classList.remove("urgente"); $("dReloj").textContent = 60;
+  $("avance").classList.toggle("oculto", desafio);
+  $("empieza").textContent = desafio ? "Escribe todo lo que puedas en 60 segundos. El reloj arranca con la primera tecla."
+                                     : "Empieza a escribir cuando quieras. El reloj arranca con la primera tecla.";
+  $("empieza").classList.remove("oculto");
+  aplicarSinMirar();
+  mostrar("pPractica");
+  marcarActual(); mostrarPista(); actualizarDatos();
+}
+$("btnReiniciar").onclick = () => pr.modo === "libre" ? empezarLibre(pr.libre) : pr.modo === "desafio" ? empezarDesafio() : empezarLeccion(pr.indice);
+$("btnSinMirar").onclick = () => { ajustes().sinMirar = !ajustes().sinMirar; DB.guardar(); aplicarSinMirar(); $("btnSinMirar").blur(); };
+function aplicarSinMirar(ayuda = false) {
+  const on = ajustes().sinMirar;
+  $("pPractica").classList.toggle("sinmirar", on);
+  $("pPractica").classList.toggle("ayuda", on && ayuda);
+  $("btnSinMirar").textContent = on ? "🙈 Sin mirar: SÍ" : "🙈 Sin mirar: NO";
+}
+
+function marcarActual(equivocado) {
+  const c = $("c" + pr.pos); if (!c) return;
+  c.className = "c actual" + (equivocado ? " equivocado" : "");
+  const caja = $("texto");
+  if (c.offsetTop - caja.scrollTop > caja.clientHeight - 60) caja.scrollTop = c.offsetTop - 20;
+}
+function segundos() { return pr.inicio ? (Date.now() - pr.inicio) / 1000 : 0; }
+function calcPpm() { const m = segundos() / 60; return m > 0.02 ? Math.round((pr.aciertos / 5) / m) : 0; }
+function calcPrec() { const t = pr.aciertos + pr.errores; return t ? Math.round(pr.aciertos * 100 / t) : 100; }
+function actualizarDatos() {
+  $("dPpm").textContent = calcPpm(); $("dPrec").textContent = calcPrec();
+  $("dAvance").textContent = Math.round(pr.pos * 100 / pr.texto.length);
+  if (pr.modo === "desafio" && pr.inicio) {
+    const quedan = Math.max(0, 60 - Math.floor(segundos()));
+    $("dReloj").textContent = quedan; $("reloj").classList.toggle("urgente", quedan <= 10);
+    if (quedan === 0 && !pr.fin) terminarPractica();
+  }
+}
+
+/* Resalta la próxima tecla y explica qué dedo usar. */
+function mostrarPista() {
+  const cont = tPr(); limpiarResaltado(cont);
+  if (pr.pos >= pr.texto.length) { $("pista").textContent = ""; return; }
+  const ch = pr.texto[pr.pos];
+  let pasos = pasosPara(ch);
+  if (!pasos.length) { $("pista").textContent = ""; return; }
+  if (pasos[0].muerta && pr.muertaPulsada) pasos = pasos.slice(1);
+  const p = pasos[0];
+  const base = p.id === "espacio" ? "ESPACIO" : nombreTecla(p.id.slice(2));
+  const visible = ACENTOS[ch] ? ch : nombreTecla(ch);
+  let txt;
+  if (p.muerta) {
+    resaltar(cont, p.id, p.dedo);
+    txt = `Primero pulsa la tecla <b>´</b> con el ${NOMBRE_DEDO[p.dedo]} (no aparece nada, ¡es normal!), luego la vocal.`;
+  } else if (p.altgr) {
+    resaltar(cont, "altgr", "pu"); resaltar(cont, p.id, p.dedo);
+    txt = `Mantén <b>AltGr</b> (a la derecha del espacio) con el pulgar derecho y pulsa <b>${esc(base)}</b> con el ${NOMBRE_DEDO[p.dedo]} → <b>${esc(ch)}</b>`;
+  } else {
+    // Mayús se pulsa con la mano contraria a la de la tecla
+    const izquierda = p.dedo[0] === "l";
+    if (p.shift) resaltar(cont, izquierda ? "shiftDer" : "shiftIzq", izquierda ? "rp" : "lp");
+    resaltar(cont, p.id, p.dedo);
+    txt = p.shift
+      ? `Mantén <b>Mayús</b> con el meñique ${izquierda ? "derecho" : "izquierdo"} y pulsa <b>${esc(base)}</b> con el ${NOMBRE_DEDO[p.dedo]}` + (visible !== base ? ` → <b>${esc(visible)}</b>` : "")
+      : `Pulsa <b>${esc(visible)}</b> con el ${NOMBRE_DEDO[p.dedo]}`;
+  }
+  $("pista").innerHTML = txt;
+}
+
+function teclaEnPractica(e) {
+  if (pr.fin) return;
+  $("avisoMayus").classList.toggle("oculto", !(e.getModifierState && e.getModifierState("CapsLock")));
+  if (e.key === "Dead") { pr.muertaPulsada = true; mostrarPista(); apretarTecla(tPr(), "k-´", "pulsada"); return; }
+  if (e.key.length !== 1) return;
+  e.preventDefault();
+  pr.muertaPulsada = false;
+  if (!pr.inicio) { pr.inicio = Date.now(); $("empieza").classList.add("oculto"); pr.reloj = setInterval(actualizarDatos, 250); }
+  const esperado = pr.texto[pr.pos];
+  const pulsada = MAPA[e.key] || (ACENTOS[e.key] && MAPA[ACENTOS[e.key]]);
+  if (e.key === esperado) {
+    pr.aciertos++; pr.seguidos = 0;
+    $("c" + pr.pos).className = "c hecho" + (pr.fallos.has(pr.pos) ? " fallo" : "");
+    if (pulsada) apretarTecla(tPr(), pulsada.id, "pulsada");
+    sonar("bien");
+    pr.pos++;
+    aplicarSinMirar(false);
+    if (pr.pos >= pr.texto.length) return terminarPractica();
+    marcarActual();
+  } else {
+    pr.errores++; pr.fallos.add(pr.pos); pr.seguidos++;
+    if (pulsada) apretarTecla(tPr(), pulsada.id, "error");
+    sonar("mal");
+    marcarActual(true);
+    if (pr.seguidos >= 3) aplicarSinMirar(true); // en modo sin mirar, la ayuda aparece tras 3 errores seguidos
+  }
+  mostrarPista(); actualizarDatos();
+}
+
+function terminarPractica() {
+  pr.fin = true; clearInterval(pr.reloj); limpiarResaltado(tPr()); $("pista").textContent = "";
+  const ppm = calcPpm(), prec = calcPrec(), seg = Math.round(segundos());
+  actualizarDatos();
+  const estrellas = prec >= 95 ? 3 : prec >= 85 ? 2 : 1;
+  let mensaje = estrellas === 3 ? "¡Excelente! Casi sin errores." :
+                estrellas === 2 ? "¡Bien! Para 3 estrellas necesitas 95% de precisión. Ve con calma." :
+                "Ve más despacio y mira la pista. Primero precisión, luego velocidad.";
+  let record = null;
+  if (pr.modo === "leccion") {
+    const id = LECCIONES[pr.indice].id, ant = jugador.lecciones[id] || {};
+    if (ant.estrellas && estrellas > ant.estrellas) mensaje = "🎉 ¡Mejoraste tus estrellas! " + mensaje;
+    jugador.lecciones[id] = {estrellas:Math.max(estrellas, ant.estrellas || 0), ppm:Math.max(ppm, ant.ppm || 0), precision:Math.max(prec, ant.precision || 0)};
+  }
+  if (pr.modo === "desafio") {
+    mensaje = "Las palabras por minuto solo cuentan las letras correctas. ¡Sin errores llegas más lejos!";
+    const ant = jugador.records.desafio;
+    if (!ant || ppm > ant.ppm || (ppm === ant.ppm && prec > ant.prec)) { jugador.records.desafio = {ppm, prec}; record = puestoEn("desafio"); }
+  }
+  DB.guardar();
+  $("rTitulo").textContent = pr.modo === "desafio" ? "⏱️ ¡Se acabó el tiempo!" : estrellas === 3 ? "¡Increíble! 🎉" : estrellas === 2 ? "¡Muy bien! 👏" : "¡Lo lograste! 💪";
+  $("rEstrellas").innerHTML = pr.modo === "desafio" ? "" : dibujarEstrellas(estrellas);
+  $("rPpm").textContent = ppm; $("rPrec").textContent = prec + "%"; $("rTiempo").textContent = seg + "s";
+  $("rMensaje").textContent = mensaje;
+  mostrarRecord($("rRecord"), record);
+  $("rSiguiente").classList.toggle("oculto", pr.modo !== "leccion" || pr.indice >= LECCIONES.length - 1);
+  $("vResultado").classList.remove("oculto");
+  sonar(record ? "record" : "fin");
+}
+function mostrarRecord(el, puesto) {
+  el.classList.toggle("oculto", !puesto);
+  if (puesto) el.textContent = `★ ¡NUEVO RÉCORD! PUESTO #${puesto} EN EL SALÓN DE LA FAMA ★`;
+}
+$("rRepetir").onclick = () => $("btnReiniciar").onclick();
+$("rSiguiente").onclick = () => empezarLeccion(pr.indice + 1);
+$("rMenu").onclick = pintarMenu;
+$("rFama").onclick = () => pintarFama(pr.modo === "desafio" ? "desafio" : "estrellas");
+
+// Texto libre
+$("btnLibre").onclick = () => { $("vLibre").classList.remove("oculto"); $("libreTexto").focus(); };
+$("libreCancelar").onclick = () => $("vLibre").classList.add("oculto");
+$("libreOk").onclick = () => {
+  const limpio = $("libreTexto").value
+    .replace(/[“”«»]/g, '"').replace(/[‘’]/g, "'").replace(/[—–]/g, "-")
+    .replace(/[^\S ]+/g, " ").replace(/ {2,}/g, " ").trim()
+    .split("").filter(c => pasosPara(c).length).join("");
+  if (limpio.length < 3) return;
+  empezarLibre(limpio);
+};
+
+/* =========================================================
+   8. JUEGO: LLUVIA DE LETRAS
+   ========================================================= */
+const jg = {modo:null, gotas:[], objetivo:null, puntos:0, aciertos:0, vidas:3, nivel:1, anim:null, ultimo:0, proxima:0, activo:false};
+
+function empezarJuego(modo) {
+  salirDeLoQueSea();
+  Object.assign(jg, {modo, gotas:[], objetivo:null, puntos:0, aciertos:0, vidas:3, nivel:1, ultimo:performance.now(), proxima:0, activo:true});
+  $("zona").querySelectorAll(".gota").forEach(g => g.remove());
+  $("tituloJuego").textContent = modo === "dificil" ? "🌧️ Lluvia de palabras" : "🌧️ Lluvia de letras";
+  mostrar("pJuego"); pintarMarcador();
+  jg.anim = requestAnimationFrame(cicloJuego);
+}
+function pararJuego() { jg.activo = false; cancelAnimationFrame(jg.anim); }
+function pintarMarcador() {
+  $("jPuntos").textContent = jg.puntos; $("jNivel").textContent = jg.nivel;
+  $("jVidas").textContent = "❤️".repeat(jg.vidas) + "🤍".repeat(3 - jg.vidas);
+}
+function nuevaGota() {
+  let palabra;
+  if (jg.modo === "facil") palabra = azar([...GUIA]);
+  else if (jg.modo === "medio") palabra = azar([..."abcdefghijklmnñopqrstuvwxyz"]);
+  else palabra = azar(PALABRAS.filter(p => p.length >= 3 && p.length <= 7));
+  const zona = $("zona");
+  const el = document.createElement("div"); el.className = "gota";
+  el.innerHTML = `<span class="ya"></span><span class="falta">${palabra}</span>`;
+  zona.appendChild(el);
+  el.style.left = Math.random() * Math.max(10, zona.clientWidth - el.offsetWidth - 10) + "px";
+  jg.gotas.push({el, palabra, avance:0, y:-50});
+}
+function cicloJuego(t) {
+  if (!jg.activo) return;
+  const dt = Math.min(50, t - jg.ultimo) / 1000; jg.ultimo = t;
+  const zona = $("zona");
+  const velocidad = (jg.modo === "dificil" ? 28 : 40) + jg.nivel * 10;            // píxeles por segundo
+  const pausa = Math.max(0.7, (jg.modo === "dificil" ? 3.2 : 2) - jg.nivel * 0.18); // segundos entre gotas
+  jg.proxima -= dt;
+  if (jg.proxima <= 0) { nuevaGota(); jg.proxima = pausa; }
+  for (const g of jg.gotas.slice()) {
+    g.y += velocidad * dt; g.el.style.top = g.y + "px";
+    if (g.y + g.el.offsetHeight >= zona.clientHeight - 6) {
+      quitarGota(g, false);
+      jg.vidas--; sonar("mal"); pintarMarcador();
+      if (jg.vidas <= 0) return finJuego();
+    }
+  }
+  jg.anim = requestAnimationFrame(cicloJuego);
+}
+function quitarGota(g, explotar) {
+  jg.gotas = jg.gotas.filter(x => x !== g);
+  if (jg.objetivo === g) jg.objetivo = null;
+  if (explotar) { g.el.classList.add("pum"); setTimeout(() => g.el.remove(), 300); } else g.el.remove();
+}
+function teclaEnJuego(e) {
+  if (!jg.activo || e.key.length !== 1) return;
+  e.preventDefault();
+  const k = e.key.toLowerCase();
+  if (!jg.objetivo) {
+    // apunta a la gota más baja que empiece con esa letra
+    const opciones = jg.gotas.filter(g => g.palabra[0] === k).sort((a, b) => b.y - a.y);
+    if (!opciones.length) { sonar("mal"); return; }
+    jg.objetivo = opciones[0]; jg.objetivo.el.classList.add("objetivo");
+  } else if (jg.objetivo.palabra[jg.objetivo.avance] !== k) { sonar("mal"); return; }
+  const g = jg.objetivo; g.avance++;
+  g.el.querySelector(".ya").textContent = g.palabra.slice(0, g.avance);
+  g.el.querySelector(".falta").textContent = g.palabra.slice(g.avance);
+  if (g.avance >= g.palabra.length) {
+    quitarGota(g, true); sonar("pum");
+    jg.puntos += g.palabra.length; jg.aciertos++;
+    if (jg.aciertos % 10 === 0) jg.nivel++;
+    pintarMarcador();
+  } else sonar("bien");
+}
+function finJuego() {
+  pararJuego();
+  terminarConPuntos("lluvia_" + jg.modo, jg.puntos, {titulo:"¡Fin del juego!", emoji:"🌧️", unidad:"puntos", otra:() => empezarJuego(jg.modo)});
+}
+document.querySelectorAll("[data-juego]").forEach(b => b.onclick = () => empezarJuego(b.dataset.juego));
+
+/* Guarda un récord de puntos y muestra la ventana de fin. */
+let finOtra = null, finTabla = null;
+function terminarConPuntos(tabla, puntos, {titulo, emoji, unidad, otra}) {
+  const ant = jugador.records[tabla] || 0;
+  let puesto = null, mensaje;
+  if (puntos > ant) { jugador.records[tabla] = puntos; DB.guardar(); puesto = puestoEn(tabla); mensaje = ant ? `Tu récord anterior era ${ant}.` : "¡Tu primera marca!"; }
+  else mensaje = ant ? `Tu récord es ${ant} ${unidad}.` : "¡Inténtalo otra vez, cada vez irás más rápido!";
+  $("fTitulo").textContent = titulo; $("fEmoji").textContent = emoji;
+  $("fPuntos").textContent = puntos; $("fUnidad").textContent = unidad; $("fMensaje").textContent = mensaje;
+  mostrarRecord($("fRecord"), puesto);
+  finOtra = otra; finTabla = tabla;
+  $("vFin").classList.remove("oculto");
+  sonar(puesto ? "record" : "fin");
+}
+$("fOtra").onclick = () => finOtra && finOtra();
+$("fMenu").onclick = pintarMenu;
+$("fFama").onclick = () => pintarFama(finTabla);
+
+/* =========================================================
+   9. SALÓN DE LA FAMA (tabla de récords estilo arcade)
+   Guarda la mejor marca de cada jugador; se muestran los 10 mejores.
+   ========================================================= */
+const TABLAS = [
+  {id:"desafio", nombre:"Desafío 1 minuto", sub:"Palabras por minuto",
+    valor:j => j.records.desafio && j.records.desafio.ppm, extra:j => j.records.desafio.prec,
+    texto:j => `${String(j.records.desafio.ppm).padStart(3, "0")} PPM`},
+  {id:"lluvia_facil", nombre:"Lluvia fácil", sub:"Lluvia de letras · fila guía", valor:j => j.records.lluvia_facil},
+  {id:"lluvia_medio", nombre:"Lluvia medio", sub:"Lluvia de letras · todas", valor:j => j.records.lluvia_medio},
+  {id:"lluvia_dificil", nombre:"Lluvia palabras", sub:"Lluvia de palabras", valor:j => j.records.lluvia_dificil},
+  {id:"atajos", nombre:"Reto de atajos", sub:"Aciertos en 1 minuto", valor:j => j.records.atajos},
+  {id:"estrellas", nombre:"Estrellas", sub:"Estrellas de las lecciones", valor:j => estrellasDe(j) || undefined}
+];
+function ranking(tablaId) {
+  const t = TABLAS.find(x => x.id === tablaId);
+  return Object.values(DB.datos.jugadores).filter(j => t.valor(j) > 0)
+    .sort((a, b) => (t.valor(b) - t.valor(a)) || ((t.extra ? t.extra(b) - t.extra(a) : 0)) || (a.creado - b.creado));
+}
+function puestoEn(tablaId) {
+  const p = ranking(tablaId).findIndex(j => j === jugador) + 1;
+  return p >= 1 && p <= 10 ? p : null;
+}
+const fama = {actual:0, rotar:null};
+function pintarFama(tablaId) {
+  cerrarVentanas();
+  mostrar("pFama");
+  if (tablaId) fama.actual = Math.max(0, TABLAS.findIndex(t => t.id === tablaId));
+  pintarTablaFama();
+  clearInterval(fama.rotar);
+  if (!tablaId) fama.rotar = setInterval(() => { fama.actual = (fama.actual + 1) % TABLAS.length; pintarTablaFama(); }, 7000);
+}
+function pintarTablaFama() {
+  const t = TABLAS[fama.actual];
+  $("famaTabs").innerHTML = TABLAS.map((x, i) => `<button class="${i === fama.actual ? "sel" : ""}" data-i="${i}">${x.nombre}</button>`).join("");
+  $("famaSub").textContent = t.sub;
+  const lista = ranking(t.id).slice(0, 10);
+  if (!lista.length) { $("famaTabla").innerHTML = `<div class="arc-vacio">Nadie todavía…<br>¡Sé el primero!</div>`; return; }
+  const ord = ["1.º","2.º","3.º","4.º","5.º","6.º","7.º","8.º","9.º","10.º"];
+  $("famaTabla").innerHTML = `<div class="arc-cab"><span>Pos</span><span></span><span>Jugador</span><span>Récord</span></div>` +
+    lista.map((j, i) => `<div class="arc-fila ${j === jugador ? "yo" : ""}" style="animation-delay:${i * 0.08}s${j === jugador ? `,${0.5 + i * 0.08}s` : ""}">
+      <span>${ord[i]}</span><span class="av">${esc(j.avatar)}</span><span>${esc(j.alias)}</span>
+      <span class="val">${t.texto ? t.texto(j) : String(t.valor(j)).padStart(4, "0")}</span></div>`).join("");
+}
+$("famaTabs").onclick = e => { const b = e.target.closest("button"); if (b) { clearInterval(fama.rotar); fama.actual = +b.dataset.i; pintarTablaFama(); } };
+
+/* ---- Zona del docente: PIN y borrar jugadores ---- */
+$("btnDocente").onclick = () => {
+  clearInterval(fama.rotar);
+  $("docPin").classList.remove("oculto"); $("docPanel").classList.add("oculto");
+  $("docPinInput").value = ""; $("docPinError").textContent = "";
+  $("docPinTexto").textContent = DB.datos.pin ? "Escribe el PIN del docente." : "Primera vez: crea un PIN de 4 a 8 números. Guárdalo bien, lo necesitarás para entrar aquí.";
+  $("vDocente").classList.remove("oculto"); $("docPinInput").focus();
+};
+$("docPinInput").onkeydown = e => { if (e.key === "Enter") $("docPinOk").click(); };
+$("docPinOk").onclick = () => {
+  const v = $("docPinInput").value.trim();
+  if (!DB.datos.pin) {
+    if (!/^\d{4,8}$/.test(v)) { $("docPinError").textContent = "El PIN debe tener de 4 a 8 números."; return; }
+    DB.datos.pin = v; DB.guardar();
+  } else if (v !== DB.datos.pin) { $("docPinError").textContent = "PIN incorrecto."; sonar("mal"); return; }
+  $("docPin").classList.add("oculto"); $("docPanel").classList.remove("oculto"); pintarListaDocente();
+};
+function pintarListaDocente() {
+  const todos = Object.values(DB.datos.jugadores).sort((a, b) => a.alias.localeCompare(b.alias));
+  $("docLista").innerHTML = todos.length ? "" : "<p class='suave'>No hay jugadores.</p>";
+  todos.forEach(j => {
+    const fila = document.createElement("div");
+    fila.innerHTML = avatarHTML(j) + `<span class="n">${esc(j.alias)} <span class="suave">· ⭐ ${estrellasDe(j)}</span></span>`;
+    const b = document.createElement("button"); b.className = "sec"; b.textContent = "🗑️ Borrar";
+    b.onclick = () => {
+      if (!b.classList.contains("peligro")) { b.className = "peligro"; b.textContent = "¿Seguro? Sí, borrar"; return; }
+      delete DB.datos.jugadores[j.id]; DB.guardar();
+      if (jugador === j) jugador = null;
+      pintarListaDocente(); pintarTablaFama();
+    };
+    fila.appendChild(b); $("docLista").appendChild(fila);
+  });
+}
+$("docCerrar1").onclick = $("docCerrar2").onclick = () => { $("vDocente").classList.add("oculto"); if (!jugador) pintarFama(); };
+
+/* =========================================================
+   10. ATAJOS DEL TECLADO
+   "probar": el atajo se puede probar dentro del programa.
+   Los que el sistema no deja atrapar (Alt+Tab, Win+D…) solo se explican.
+   ========================================================= */
+const ATAJOS = [
+  {grupo:"✂️ Copiar, cortar y pegar", items:[
+    {teclas:["Ctrl","C"], nombre:"Copiar", que:"Copia lo que seleccionaste. Es como sacarle una fotocopia.", probar:"c"},
+    {teclas:["Ctrl","X"], nombre:"Cortar", que:"Quita lo seleccionado y lo guarda para pegarlo en otro lado. Como recortar con tijera.", probar:"x"},
+    {teclas:["Ctrl","V"], nombre:"Pegar", que:"Pega lo último que copiaste o cortaste.", probar:"v"},
+    {teclas:["Ctrl","Z"], nombre:"Deshacer", que:"¡El botón de rescate! Deshace lo último que hiciste.", probar:"z"},
+    {teclas:["Ctrl","Y"], nombre:"Rehacer", que:"Vuelve a hacer lo que deshiciste con Ctrl + Z.", probar:"y"},
+    {teclas:["Ctrl","A"], nombre:"Seleccionar todo", que:"Marca todo el texto de un documento o todos los archivos de una carpeta.", probar:"a"}]},
+  {grupo:"📄 Documentos", items:[
+    {teclas:["Ctrl","S"], nombre:"Guardar", que:"Guarda tu trabajo. ¡Úsalo seguido! (En Word en español es Ctrl + G.)", probar:"s"},
+    {teclas:["Ctrl","P"], nombre:"Imprimir", que:"Abre la ventana para imprimir.", probar:"p"},
+    {teclas:["Ctrl","F"], nombre:"Buscar", que:"Busca una palabra en la página. (En Word en español es Ctrl + B.)", probar:"f"}]},
+  {grupo:"✍️ Al escribir", items:[
+    {teclas:["Mayús","→"], nombre:"Seleccionar letra por letra", que:"Mantén Mayús y muévete con las flechas para marcar texto."},
+    {teclas:["Ctrl","→"], nombre:"Saltar de palabra en palabra", que:"El cursor salta una palabra completa en vez de una letra."},
+    {teclas:["Inicio"], nombre:"Ir al principio de la línea", que:"Lleva el cursor al comienzo del renglón."},
+    {teclas:["Fin"], nombre:"Ir al final de la línea", que:"Lleva el cursor al final del renglón."},
+    {teclas:["Ctrl","Borrar"], nombre:"Borrar una palabra", que:"Borra la palabra completa que está a la izquierda."},
+    {teclas:["Supr"], nombre:"Borrar hacia adelante", que:"Borrar quita la letra de la izquierda; Supr quita la de la derecha."},
+    {teclas:["Tab"], nombre:"Siguiente casilla", que:"En un formulario, salta a la siguiente casilla."}]},
+  {grupo:"🪟 Ventanas de Windows", items:[
+    {teclas:["Alt","Tab"], nombre:"Cambiar de ventana", que:"Mantén Alt y pulsa Tab varias veces para elegir otra ventana."},
+    {teclas:["Win","D"], nombre:"Ver el escritorio", que:"Esconde todas las ventanas. Repítelo para que vuelvan."},
+    {teclas:["Win","E"], nombre:"Abrir mis archivos", que:"Abre el explorador de archivos."},
+    {teclas:["Win","Mayús","S"], nombre:"Captura de pantalla", que:"Te deja recortar un pedazo de la pantalla como una foto."},
+    {teclas:["Win","V"], nombre:"Ver lo que copiaste", que:"Muestra el historial de cosas copiadas (hay que activarlo la primera vez)."},
+    {teclas:["Win","L"], nombre:"Bloquear la computadora", que:"Úsalo cuando te levantes de tu puesto."},
+    {teclas:["Alt","F4"], nombre:"Cerrar la ventana", que:"¡Cuidado! Cierra el programa que estás usando."},
+    {teclas:["Ctrl","Mayús","Esc"], nombre:"Administrador de tareas", que:"Para cerrar un programa que se quedó «pegado»."}]},
+  {grupo:"🌐 En el navegador", items:[
+    {teclas:["Ctrl","T"], nombre:"Nueva pestaña", que:"Abre una pestaña nueva en Chrome, Edge o Firefox."},
+    {teclas:["Ctrl","W"], nombre:"Cerrar pestaña", que:"Cierra la pestaña que estás viendo."},
+    {teclas:["F5"], nombre:"Recargar la página", que:"Vuelve a cargar la página por si algo no se ve bien.", probar:"F5"},
+    {teclas:["Ctrl","+"], nombre:"Agrandar", que:"Hace más grande lo que ves en pantalla (zoom).", probar:"+"},
+    {teclas:["Ctrl","-"], nombre:"Achicar", que:"Hace más pequeño lo que ves en pantalla.", probar:"-"},
+    {teclas:["Ctrl","0"], nombre:"Tamaño normal", que:"Deja el zoom como estaba al principio.", probar:"0"}]}
+];
+const ID_TECLA = {Ctrl:"ctrl", "Mayús":"shiftIzq", Alt:"alt", Win:"win", Tab:"tab", Borrar:"retroceso", Esc:null, "→":null, Inicio:null, Fin:null, Supr:null, F4:null, F5:null};
+const idDeTecla = t => t in ID_TECLA ? ID_TECLA[t] : "k-" + t.toLowerCase();
+const kbdHTML = teclas => teclas.map(t => `<kbd>${esc(t === "Win" ? "⊞ Win" : t)}</kbd>`).join('<span class="mas">+</span>');
+
+function pintarAtajos() {
+  salirDeLoQueSea();
+  $("atajosGrupos").innerHTML = ATAJOS.map((g, gi) => `<div class="grupo-atajos"><h3 class="seccion">${g.grupo}</h3><div class="grid">` +
+    g.items.map((a, ai) => `<div class="atajo" data-g="${gi}" data-a="${ai}">
+      <div>${kbdHTML(a.teclas)}</div><div class="nom">${esc(a.nombre)}</div><div class="que">${esc(a.que)}</div>
+      ${a.probar ? '<div class="probar">👆 ¡Pruébalo ahora!</div>' : ""}</div>`).join("") + "</div></div>").join("");
+  $("listaAtajos").classList.remove("oculto"); $("retoAtajos").classList.add("oculto");
+  mostrar("pAtajos");
+}
+function verEnTeclado(cont, teclas) {
+  limpiarResaltado(cont);
+  teclas.forEach(t => { const id = idDeTecla(t); if (id) resaltar(cont, id); });
+}
+$("atajosGrupos").onclick = e => {
+  const c = e.target.closest(".atajo"); if (!c) return;
+  verEnTeclado($("tecladoAtajos"), ATAJOS[c.dataset.g].items[c.dataset.a].teclas);
+};
+/* Convierte una pulsación en el código de atajo ("c", "F5", "+"...) o null. */
+function comboDe(e) {
+  if (e.key === "F5") return "F5";
+  const altGr = e.getModifierState && e.getModifierState("AltGraph");
+  if (!e.ctrlKey || e.altKey || altGr) return null;
+  const k = e.key.toLowerCase();
+  if (k === "control" || k === "shift") return null;
+  return k === "=" ? "+" : k;
+}
+const todosLosAtajos = () => ATAJOS.flatMap(g => g.items);
+function teclaEnAtajos(e) {
+  const combo = comboDe(e);
+  if (!combo) return;
+  const atajo = todosLosAtajos().find(a => a.probar === combo);
+  if (!atajo) return;
+  e.preventDefault(); // que no se abra imprimir, buscar, etc.
+  if (reto.activo) return respuestaReto(atajo);
+  const i = todosLosAtajos().indexOf(atajo);
+  const cards = [...document.querySelectorAll(".atajo")];
+  const card = cards[i];
+  card.classList.add("probado"); sonar("pum");
+  card.scrollIntoView({block:"center", behavior:"smooth"});
+  verEnTeclado($("tecladoAtajos"), atajo.teclas);
+  setTimeout(() => card.classList.remove("probado"), 1600);
+}
+
+/* ---- Reto de atajos: 1 minuto, el mayor número de aciertos ---- */
+const reto = {activo:false, puntos:0, actual:null, fin:0, reloj:null, espera:false};
+function empezarReto() {
+  cerrarVentanas();
+  if (pantalla !== "pAtajos") pintarAtajos();
+  Object.assign(reto, {activo:true, puntos:0, actual:null, fin:Date.now() + 60000, espera:false});
+  $("listaAtajos").classList.add("oculto"); $("retoAtajos").classList.remove("oculto");
+  $("rtPuntos").textContent = 0; siguientePregunta();
+  clearInterval(reto.reloj);
+  reto.reloj = setInterval(() => {
+    const quedan = Math.max(0, Math.ceil((reto.fin - Date.now()) / 1000));
+    $("rtReloj").textContent = quedan;
+    if (quedan === 0) { pararReto(); terminarConPuntos("atajos", reto.puntos, {titulo:"⚡ ¡Se acabó el reto!", emoji:"⌨️", unidad:"aciertos", otra:empezarReto}); }
+  }, 200);
+}
+function pararReto() { reto.activo = false; clearInterval(reto.reloj); }
+function siguientePregunta() {
+  const posibles = todosLosAtajos().filter(a => a.probar && a !== reto.actual);
+  reto.actual = azar(posibles); reto.espera = false;
+  $("rtPregunta").textContent = reto.actual.nombre;
+  $("rtQue").textContent = reto.actual.que;
+  $("rtRespuesta").innerHTML = "";
+  limpiarResaltado($("tecladoReto"));
+}
+function respuestaReto(atajo) {
+  if (reto.espera) return;
+  if (atajo === reto.actual) {
+    reto.puntos++; $("rtPuntos").textContent = reto.puntos; sonar("pum");
+    $("rtRespuesta").innerHTML = "✅ ¡Correcto!";
+    reto.espera = true; setTimeout(() => reto.activo && siguientePregunta(), 400);
+  } else {
+    sonar("mal"); reto.espera = true;
+    $("rtRespuesta").innerHTML = `❌ Era ${kbdHTML(reto.actual.teclas)}`;
+    verEnTeclado($("tecladoReto"), reto.actual.teclas);
+    setTimeout(() => reto.activo && siguientePregunta(), 1600);
+  }
+}
+$("btnReto").onclick = () => { if (!jugador) { pintarJugadores(); return; } empezarReto(); };
+$("rtSalir").onclick = () => { pararReto(); pintarAtajos(); };
+
+/* =========================================================
+   11. AJUSTES
+   ========================================================= */
+function abrirAjustes() {
+  const a = ajustes();
+  $("optSonido").checked = a.sonido; $("optColores").checked = a.colores; $("optSinMirar").checked = a.sinMirar;
+  $("optDistribucion").value = a.distribucion;
+  $("vAjustes").classList.remove("oculto");
+}
+function aplicarAjustes() {
+  const a = ajustes();
+  a.sonido = $("optSonido").checked; a.colores = $("optColores").checked; a.sinMirar = $("optSinMirar").checked;
+  const cambioTeclado = a.distribucion !== $("optDistribucion").value;
+  a.distribucion = $("optDistribucion").value;
+  DB.guardar();
+  document.body.classList.toggle("colores", a.colores);
+  aplicarSinMirar();
+  if (cambioTeclado) { pintarTodosLosTeclados(); if (pantalla === "pPractica" && !pr.fin) mostrarPista(); }
+}
+["optSonido","optColores","optSinMirar","optDistribucion"].forEach(id => $(id).onchange = aplicarAjustes);
+$("ajustesOk").onclick = () => $("vAjustes").classList.add("oculto");
+// Los enlaces se abren en el navegador del sistema (dentro del .exe no hay pestañas)
+document.querySelectorAll(".acerca a").forEach(a => a.onclick = e => {
+  e.preventDefault();
+  if (ES_APP) Neutralino.os.open(a.href); else window.open(a.href, "_blank");
+});
+
+/* =========================================================
+   12. TECLADO FÍSICO: reparte cada pulsación según la pantalla
+   ========================================================= */
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") {
+    ["vAjustes","vLibre","vDocente"].forEach(v => $(v).classList.add("oculto"));
+    return;
+  }
+  if (ventanaAbierta("vResultado") || ventanaAbierta("vFin")) {
+    if (e.key === "Enter") { e.preventDefault(); (ventanaAbierta("vResultado") ? $("rRepetir") : $("fOtra")).click(); }
+    return;
+  }
+  if (ventanaAbierta("vLibre") || ventanaAbierta("vAjustes") || ventanaAbierta("vDocente")) return;
+  if (pantalla === "pAtajos") return teclaEnAtajos(e);
+  // AltGr en Windows llega como Ctrl + Alt: hay que dejarlo pasar para escribir @, [ ], { }...
+  const altGr = (e.getModifierState && e.getModifierState("AltGraph")) || (e.ctrlKey && e.altKey && e.key.length === 1);
+  if ((e.ctrlKey || e.altKey || e.metaKey) && !altGr) return;
+  if (pantalla !== "pPractica" && pantalla !== "pJuego") return; // en las otras pantallas se escribe normal
+  // que Espacio no "pulse" un botón que quedó seleccionado
+  if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
+  if (pantalla === "pPractica") teclaEnPractica(e);
+  else teclaEnJuego(e);
+});
+
+/* =========================================================
+   13. ARRANQUE
+   ========================================================= */
+async function arrancar() {
+  // Dentro del .exe, Neutralino sirve js/neutralino.js con sus variables NL_* al principio.
+  // En el navegador el archivo no existe (o viene sin esas variables) y se sigue en modo página.
+  await new Promise(listo => { const s = document.createElement("script"); s.src = "js/neutralino.js"; s.onload = s.onerror = listo; document.head.appendChild(s); });
+  ES_APP = typeof window.NL_PORT !== "undefined" && typeof window.Neutralino !== "undefined";
+  if (ES_APP) Neutralino.init();
+  await DB.cargar();
+  document.body.classList.toggle("colores", ajustes().colores);
+  pintarTodosLosTeclados(); pintarManos();
+  pintarJugadores();
+}
+arrancar();
+</script>
+</body>
+</html>

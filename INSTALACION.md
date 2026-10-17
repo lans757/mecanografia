@@ -88,7 +88,7 @@ Es el mismo juego. La diferencia es que el progreso se guarda **en el navegador*
 
 1. Ve a **🏆 Récords → 🔧 Docente** y crea un **PIN** de 4 a 8 números. Anótalo en un lugar seguro. Sirve para borrar alias inapropiados.
 2. En **⚙️ Ajustes → Teclado**, elige **Latinoamérica** o **España**. Si el teclado tiene la tecla **Ç**, es de España.
-3. Pide a cada estudiante que cree su jugador con **➕ Nuevo jugador**.
+3. Los estudiantes **no necesitan registrarse**: empiezan a escribir de una vez. Al terminar la primera lección, el programa les pide un alias para guardar sus estrellas. Recuérdales usar **siempre el mismo alias**.
 
 ---
 

@@ -177,6 +177,14 @@ h2{margin:0 0 12px}
 @keyframes entra{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:none}}
 @keyframes parpadeo{50%{opacity:.35}}
 
+/* Guardar alias al terminar */
+.guardar{background:var(--fondo);border:2px dashed var(--acento);border-radius:14px;padding:12px;margin:12px 0}
+.guardar p{margin:0 0 8px}
+.guardar .fila-alias{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.guardar input{flex:1;min-width:160px;text-align:center;font-size:18px}
+.guardar .error{min-height:0;margin:6px 0 0}
+.aviso-inv{background:var(--panel);border:2px dashed var(--acento);border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+
 /* Cómo jugar */
 .ayuda-cab{text-align:center;margin-bottom:10px}
 .ayuda-cab h2{font-size:30px}
@@ -225,7 +233,7 @@ kbd{display:inline-block;min-width:30px;padding:3px 8px;border-radius:7px;border
     <button class="sec" id="btnAyuda">📖 Cómo jugar</button>
     <button class="sec" id="btnAtajos">⌨️ Atajos</button>
     <button class="sec" id="btnAjustes" title="Ajustes">⚙️ Ajustes</button>
-    <button class="sec soloJugador" id="btnCambiar">👤 Cambiar</button>
+    <button class="sec" id="btnCambiar">👤 Jugadores</button>
   </nav>
 </header>
 
@@ -233,7 +241,9 @@ kbd{display:inline-block;min-width:30px;padding:3px 8px;border-radius:7px;border
   <!-- 1. Elegir o crear jugador -->
   <section id="pJugador">
     <div class="panel centro" id="eligeJugador">
-      <h2>¿Quién va a jugar?</h2>
+      <h2>¿Ya tienes alias?</h2>
+      <p class="suave" style="margin-top:-6px">Tócalo para seguir con tus estrellas. Si no tienes, juega de una vez: al terminar una lección podrás escribir tu alias.</p>
+      <button id="btnJugarYa" style="font-size:19px;padding:12px 26px">▶ Jugar sin alias</button>
       <input id="buscarJugador" class="oculto" placeholder="🔍 Busca tu alias" style="width:100%;max-width:340px">
       <div class="jugadores" id="listaJugadores"></div>
       <button id="btnNuevoJugador">➕ Nuevo jugador</button>
@@ -266,6 +276,8 @@ kbd{display:inline-block;min-width:30px;padding:3px 8px;border-radius:7px;border
         izquierda en <b>A S D F</b>, derecha en <b>J K L Ñ</b>. Las teclas F y J tienen una rayita para encontrarlas sin mirar.
       </div>
     </div>
+    <div class="aviso-inv oculto" id="avisoInvitado"><span>🙂 Estás jugando como <b>invitado</b>. Al terminar una lección escribe tu alias para guardar tus estrellas.</span>
+      <button class="sec" id="btnTengoAlias">Ya tengo alias</button></div>
     <h3 class="seccion">📚 Lecciones</h3>
     <div class="grid" id="gridLecciones"></div>
     <h3 class="seccion">🏁 Competencia <span class="suave" style="font-size:15px;font-weight:normal">— tus mejores marcas van al Salón de la Fama</span></h3>
@@ -343,8 +355,9 @@ kbd{display:inline-block;min-width:30px;padding:3px 8px;border-radius:7px;border
     <ol class="pasos">
       <li><span class="n">1</span><div><b>🪑 Siéntate bien</b>
         Espalda recta, pies en el piso y la pantalla frente a tus ojos. Las muñecas van en el aire, sin apoyarlas en la mesa.</div></li>
-      <li><span class="n">2</span><div><b>👤 Crea tu jugador</b>
-        Inventa un <b>alias</b> divertido, por ejemplo <i>RayoVeloz</i>. No pongas tu nombre y apellido completos. Usa <b>siempre el mismo alias</b> para no perder tus estrellas.</div></li>
+      <li><span class="n">2</span><div><b>👤 Empieza y guarda con tu alias</b>
+        Puedes empezar a escribir de una vez. Al terminar una lección te pediremos un <b>alias</b>, un nombre de jugador inventado como <i>RayoVeloz</i>. No pongas tu nombre y apellido completos.
+        Usa <b>siempre el mismo alias</b>: si lo escribes otra vez, tus estrellas se suman.</div></li>
       <li><span class="n">3</span><div><b>🏠 Pon los dedos en la fila guía</b>
         Mano izquierda en <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> <kbd>F</kbd>, mano derecha en <kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd> <kbd>Ñ</kbd> y los pulgares sobre el <kbd>Espacio</kbd>.
         Las teclas <kbd>F</kbd> y <kbd>J</kbd> tienen una <b>rayita</b>: tócalas para encontrarlas sin mirar. Después de cada tecla, el dedo vuelve a su casa.</div></li>
@@ -420,6 +433,7 @@ kbd{display:inline-block;min-width:30px;padding:3px 8px;border-radius:7px;border
       <div><b id="rTiempo">0s</b><span class="suave">tiempo</span></div>
     </div>
     <div class="record oculto" id="rRecord"></div>
+    <div class="guardar oculto" id="rGuardar"></div>
     <p class="suave" id="rMensaje"></p>
     <div class="botones">
       <button class="sec" id="rRepetir">↺ Repetir</button>
@@ -437,6 +451,7 @@ kbd{display:inline-block;min-width:30px;padding:3px 8px;border-radius:7px;border
     <div style="font-size:48px" id="fEmoji">🌧️</div>
     <p>Hiciste <b id="fPuntos">0</b> <span id="fUnidad">puntos</span>.</p>
     <div class="record oculto" id="fRecord"></div>
+    <div class="guardar oculto" id="fGuardar"></div>
     <p class="suave" id="fMensaje"></p>
     <div class="botones">
       <button id="fOtra">Jugar otra vez</button>
@@ -714,7 +729,12 @@ const COLORES = ["#ff8787","#ffa94d","#ffd43b","#8ce99a","#63e6be","#74c0fc","#9
 // filtro sencillo de alias inapropiados (se compara sin tildes y cambiando 0→o, 1→i, 3→e, 4→a, 5→s)
 const PROHIBIDAS = ["puta","puto","mierda","verga","coño","cono","pendej","marico","mamaguev","culo","cabron","idiota","estupid","imbecil","huev","gonorrea","malparid","pinga","caraj","joder","sexo","nazi","hitler","fuck","shit","bitch","dick"];
 
-let jugador = null; // el jugador que está usando la computadora
+// El jugador actual. Al abrir el programa es un "invitado" que no se guarda:
+// los niños empiezan a escribir de una vez y ponen su alias al terminar (como en el arcade).
+let jugador = null;
+function nuevoInvitado() {
+  return {id:null, invitado:true, alias:"Invitado", avatar:azar(AVATARES), color:azar(COLORES), creado:Date.now(), lecciones:{}, records:{}};
+}
 
 function normalizar(s) {
   return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
@@ -727,10 +747,44 @@ function buscarPorAlias(alias) {
 function estrellasDe(j) { return Object.values(j.lecciones).reduce((s, r) => s + (r.estrellas || 0), 0); }
 const avatarHTML = (j, clase = "") => `<span class="avatar ${clase}" style="background:${esc(j.color)}">${esc(j.avatar)}</span>`;
 
+function actualizarChip() { $("chipJugador").innerHTML = avatarHTML(jugador) + esc(jugador.alias); }
 function entrar(j) {
-  jugador = j; j.visto = Date.now(); DB.guardar();
-  $("chipJugador").innerHTML = avatarHTML(j) + esc(j.alias);
+  // si un invitado elige su jugador guardado, lo que hizo hoy se suma
+  if (jugador && jugador.invitado && !j.invitado) fusionar(j, jugador);
+  jugador = j;
+  if (!j.invitado) { j.visto = Date.now(); DB.guardar(); }
+  actualizarChip();
   pintarMenu();
+}
+/* Suma el progreso de "origen" en "destino" quedándose con lo mejor de cada cosa. */
+function fusionar(destino, origen) {
+  for (const [id, o] of Object.entries(origen.lecciones)) {
+    const d = destino.lecciones[id] || {};
+    destino.lecciones[id] = {estrellas:Math.max(d.estrellas || 0, o.estrellas || 0), ppm:Math.max(d.ppm || 0, o.ppm || 0), precision:Math.max(d.precision || 0, o.precision || 0)};
+  }
+  for (const [k, o] of Object.entries(origen.records)) {
+    const d = destino.records[k];
+    if (k === "desafio") { if (!d || o.ppm > d.ppm || (o.ppm === d.ppm && o.prec > d.prec)) destino.records[k] = o; }
+    else destino.records[k] = Math.max(d || 0, o);
+  }
+}
+/* Revisa un alias. Devuelve un mensaje de error, o null si sirve. */
+function errorDeAlias(alias) {
+  if (alias.length < 3) return "Tu alias necesita al menos 3 letras.";
+  if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñÜü0-9_ ]+$/.test(alias)) return "Usa solo letras, números, espacios o _";
+  const n = normalizar(alias);
+  if (n === "invitado") return "Elige un alias que sea solo tuyo.";
+  if (PROHIBIDAS.some(p => n.includes(normalizar(p)))) return "Ese alias no está permitido. Elige otro.";
+  return null;
+}
+/* Crea un jugador nuevo; si el actual es invitado, se lleva su progreso. */
+function crearJugador(alias, avatar, color) {
+  const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  const base = jugador && jugador.invitado ? jugador : {lecciones:{}, records:{}};
+  const j = {id, alias, avatar, color, creado:Date.now(), visto:Date.now(), lecciones:base.lecciones, records:base.records};
+  DB.datos.jugadores[id] = j; DB.guardar();
+  jugador = j; actualizarChip();
+  return j;
 }
 
 /* =========================================================
@@ -771,7 +825,7 @@ function cerrarVentanas() { document.querySelectorAll(".velo").forEach(v => v.cl
 const ventanaAbierta = id => !$(id).classList.contains("oculto");
 
 $("btnMenu").onclick = () => { salirDeLoQueSea(); pintarMenu(); };
-$("btnCambiar").onclick = () => { salirDeLoQueSea(); jugador = null; pintarJugadores(); };
+$("btnCambiar").onclick = () => { salirDeLoQueSea(); pintarJugadores(); };
 $("btnFama").onclick = () => { salirDeLoQueSea(); pintarFama(); };
 $("btnAtajos").onclick = () => { salirDeLoQueSea(); pintarAtajos(); };
 function verAyuda() { salirDeLoQueSea(); mostrar("pAyuda"); }
@@ -791,15 +845,17 @@ function pintarJugadores() {
     b.onclick = () => entrar(j);
     lista.appendChild(b);
   });
+  if (!todos.length) lista.innerHTML = '<p class="suave" style="grid-column:1/-1">Todavía no hay jugadores guardados en esta computadora.</p>';
   $("eligeJugador").classList.remove("oculto"); $("formJugador").classList.add("oculto");
   mostrar("pJugador");
-  if (!todos.length) abrirFormJugador();
 }
+$("btnJugarYa").onclick = () => entrar(jugador && jugador.invitado ? jugador : nuevoInvitado());
+$("btnTengoAlias").onclick = pintarJugadores;
 $("buscarJugador").oninput = pintarJugadores;
 
 const nuevo = {avatar:AVATARES[0], color:COLORES[5]};
 function abrirFormJugador() {
-  nuevo.avatar = azar(AVATARES); nuevo.color = azar(COLORES);
+  nuevo.avatar = jugador ? jugador.avatar : azar(AVATARES); nuevo.color = jugador ? jugador.color : azar(COLORES);
   $("alias").value = ""; $("errorAlias").textContent = "";
   $("eligeJugador").classList.add("oculto"); $("formJugador").classList.remove("oculto");
   pintarElecciones(); $("alias").focus();
@@ -816,11 +872,8 @@ $("btnVolverJugadores").onclick = pintarJugadores;
 $("alias").onkeydown = e => { if (e.key === "Enter") $("btnCrear").click(); };
 $("btnCrear").onclick = () => {
   const alias = $("alias").value.trim().replace(/\s+/g, " ");
-  const error = msg => { $("errorAlias").textContent = msg; sonar("mal"); };
-  if (alias.length < 3) return error("Tu alias necesita al menos 3 letras.");
-  if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñÜü0-9_ ]+$/.test(alias)) return error("Usa solo letras, números, espacios o _");
-  const n = normalizar(alias);
-  if (PROHIBIDAS.some(p => n.includes(normalizar(p)))) return error("Ese alias no está permitido. Elige otro.");
+  const error = errorDeAlias(alias);
+  if (error) { $("errorAlias").textContent = error; sonar("mal"); return; }
   const existe = buscarPorAlias(alias);
   if (existe) {
     $("errorAlias").innerHTML = `Ya existe <b>${esc(existe.alias)}</b>. Si eres tú, `;
@@ -828,10 +881,7 @@ $("btnCrear").onclick = () => {
     b.onclick = () => entrar(existe); $("errorAlias").appendChild(b);
     return;
   }
-  const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-  const j = {id, alias, avatar:nuevo.avatar, color:nuevo.color, creado:Date.now(), visto:Date.now(), lecciones:{}, records:{}};
-  DB.datos.jugadores[id] = j; DB.guardar();
-  entrar(j);
+  entrar(crearJugador(alias, nuevo.avatar, nuevo.color));
 };
 
 /* ---- Pantalla: menú ---- */
@@ -856,6 +906,7 @@ function pintarMenu() {
     b.onclick = () => empezarLeccion(i);
     grid.appendChild(b);
   });
+  $("avisoInvitado").classList.toggle("oculto", !jugador.invitado);
   $("menuAvatar").style.background = jugador.color; $("menuAvatar").textContent = jugador.avatar;
   $("totalEstrellas").textContent = `${estrellasDe(jugador)} de ${LECCIONES.length * 3} ⭐`;
   document.querySelectorAll("#pMenu [data-record]").forEach(s => s.textContent = textoRecord(s.dataset.record));
@@ -1076,13 +1127,45 @@ function terminarPractica() {
   $("rPpm").textContent = ppm; $("rPrec").textContent = prec + "%"; $("rTiempo").textContent = seg + "s";
   $("rMensaje").textContent = mensaje;
   mostrarRecord($("rRecord"), record);
+  pintarGuardar($("rGuardar"), pr.modo === "desafio" ? "desafio" : "estrellas", $("rRecord"));
   $("rSiguiente").classList.toggle("oculto", pr.modo !== "leccion" || pr.indice >= LECCIONES.length - 1);
   $("vResultado").classList.remove("oculto");
   sonar(record ? "record" : "fin");
 }
 function mostrarRecord(el, puesto) {
   el.classList.toggle("oculto", !puesto);
-  if (puesto) el.textContent = `★ ¡NUEVO RÉCORD! PUESTO #${puesto} EN EL SALÓN DE LA FAMA ★`;
+  if (!puesto) return;
+  el.textContent = jugador.invitado ? `★ ¡PUESTO #${puesto}! ESCRIBE TU ALIAS PARA ENTRAR AL SALÓN DE LA FAMA ★`
+                                    : `★ ¡NUEVO RÉCORD! PUESTO #${puesto} EN EL SALÓN DE LA FAMA ★`;
+}
+/* Al terminar, si se juega como invitado: cajita para escribir el alias y guardar. */
+function pintarGuardar(cont, tabla, recordEl) {
+  cont.classList.toggle("oculto", !jugador.invitado);
+  if (!jugador.invitado) return;
+  cont.innerHTML = `<p><b>💾 Guarda tus estrellas y récords</b><br><span class="suave">Escribe tu alias. Si ya tienes uno, escribe el mismo y se suma todo.</span></p>
+    <div class="fila-alias"><input maxlength="16" placeholder="Tu alias (ej: RayoVeloz)" autocomplete="off"><button>Guardar</button></div>
+    <div class="error"></div>`;
+  const input = cont.querySelector("input"), btn = cont.querySelector("button"), err = cont.querySelector(".error");
+  const listo = () => {
+    cont.innerHTML = `<p>✅ ¡Guardado! Ahora eres ${avatarHTML(jugador)} <b>${esc(jugador.alias)}</b></p>`;
+    const puesto = puestoEn(tabla);
+    mostrarRecord(recordEl, puesto);
+    sonar(puesto ? "record" : "pum");
+  };
+  btn.onclick = () => {
+    const alias = input.value.trim().replace(/\s+/g, " ");
+    const error = errorDeAlias(alias);
+    if (error) { err.textContent = error; sonar("mal"); return; }
+    const existe = buscarPorAlias(alias);
+    if (!existe) { crearJugador(alias, jugador.avatar, jugador.color); return listo(); }
+    err.innerHTML = `Ya existe ${avatarHTML(existe)} <b>${esc(existe.alias)}</b>. ¿Eres tú? `;
+    const si = document.createElement("button"); si.textContent = "Sí, soy yo"; si.style.padding = "4px 12px";
+    si.onclick = () => { fusionar(existe, jugador); jugador = existe; existe.visto = Date.now(); DB.guardar(); actualizarChip(); listo(); };
+    err.appendChild(si);
+  };
+  input.onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); btn.click(); } };
+  // se enfoca con un poco de retraso para que las últimas teclas del juego no caigan aquí
+  setTimeout(() => { if (cont.contains(input)) { input.value = ""; input.focus(); } }, 700);
 }
 $("rRepetir").onclick = () => $("btnReiniciar").onclick();
 $("rSiguiente").onclick = () => empezarLeccion(pr.indice + 1);
@@ -1190,6 +1273,7 @@ function terminarConPuntos(tabla, puntos, {titulo, emoji, unidad, otra}) {
   $("fTitulo").textContent = titulo; $("fEmoji").textContent = emoji;
   $("fPuntos").textContent = puntos; $("fUnidad").textContent = unidad; $("fMensaje").textContent = mensaje;
   mostrarRecord($("fRecord"), puesto);
+  pintarGuardar($("fGuardar"), tabla, $("fRecord"));
   finOtra = otra; finTabla = tabla;
   $("vFin").classList.remove("oculto");
   sonar(puesto ? "record" : "fin");
@@ -1212,13 +1296,15 @@ const TABLAS = [
   {id:"atajos", nombre:"Reto de atajos", sub:"Aciertos en 1 minuto", valor:j => j.records.atajos},
   {id:"estrellas", nombre:"Estrellas", sub:"Estrellas de las lecciones", valor:j => estrellasDe(j) || undefined}
 ];
-function ranking(tablaId) {
+function ranking(tablaId, conInvitado = false) {
   const t = TABLAS.find(x => x.id === tablaId);
-  return Object.values(DB.datos.jugadores).filter(j => t.valor(j) > 0)
+  const todos = Object.values(DB.datos.jugadores);
+  if (conInvitado && jugador && jugador.invitado) todos.push(jugador); // para decirle en qué puesto quedaría
+  return todos.filter(j => t.valor(j) > 0)
     .sort((a, b) => (t.valor(b) - t.valor(a)) || ((t.extra ? t.extra(b) - t.extra(a) : 0)) || (a.creado - b.creado));
 }
 function puestoEn(tablaId) {
-  const p = ranking(tablaId).findIndex(j => j === jugador) + 1;
+  const p = ranking(tablaId, true).findIndex(j => j === jugador) + 1;
   return p >= 1 && p <= 10 ? p : null;
 }
 const fama = {actual:0, rotar:null};
@@ -1271,13 +1357,13 @@ function pintarListaDocente() {
     b.onclick = () => {
       if (!b.classList.contains("peligro")) { b.className = "peligro"; b.textContent = "¿Seguro? Sí, borrar"; return; }
       delete DB.datos.jugadores[j.id]; DB.guardar();
-      if (jugador === j) jugador = null;
+      if (jugador === j) { jugador = nuevoInvitado(); actualizarChip(); }
       pintarListaDocente(); pintarTablaFama();
     };
     fila.appendChild(b); $("docLista").appendChild(fila);
   });
 }
-$("docCerrar1").onclick = $("docCerrar2").onclick = () => { $("vDocente").classList.add("oculto"); if (!jugador) pintarFama(); };
+$("docCerrar1").onclick = $("docCerrar2").onclick = () => $("vDocente").classList.add("oculto");
 
 /* =========================================================
    10. ATAJOS DEL TECLADO
@@ -1405,7 +1491,7 @@ function respuestaReto(atajo) {
     setTimeout(() => reto.activo && siguientePregunta(), 1600);
   }
 }
-$("btnReto").onclick = () => { if (!jugador) { pintarJugadores(); return; } empezarReto(); };
+$("btnReto").onclick = empezarReto;
 $("rtSalir").onclick = () => { pararReto(); pintarAtajos(); };
 
 /* =========================================================
@@ -1444,6 +1530,7 @@ document.addEventListener("keydown", e => {
     return;
   }
   if (ventanaAbierta("vResultado") || ventanaAbierta("vFin")) {
+    if (e.target.tagName === "INPUT") return; // está escribiendo su alias
     if (e.key === "Enter") { e.preventDefault(); (ventanaAbierta("vResultado") ? $("rRepetir") : $("fOtra")).click(); }
     return;
   }
@@ -1471,7 +1558,7 @@ async function arrancar() {
   await DB.cargar();
   document.body.classList.toggle("colores", ajustes().colores);
   pintarTodosLosTeclados(); pintarManos();
-  pintarJugadores();
+  entrar(nuevoInvitado()); // directo a practicar, sin registrarse
 }
 arrancar();
 </script>

@@ -152,6 +152,13 @@ h2{margin:0 0 12px}
 .gota.objetivo{background:#f08c00}
 .gota.pum{animation:pum .3s forwards}
 @keyframes pum{to{transform:scale(1.8);opacity:0}}
+.inicio-juego{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:var(--panel);z-index:2;text-align:center;padding:16px}
+.inicio-juego .tit{font-size:26px;font-weight:800}
+.contador{display:flex;align-items:center;gap:18px}
+.contador button{width:58px;height:58px;font-size:32px;padding:0;border-radius:50%}
+.contador button:disabled{opacity:.35;cursor:default}
+.contador b{font-size:56px;min-width:80px;font-family:Consolas,monospace}
+.vel-nombre{font-size:20px;font-weight:700}
 #zona .piso{position:absolute;left:0;right:0;bottom:0;height:6px;background:var(--mal);opacity:.5}
 .vidas{font-size:22px}
 
@@ -326,11 +333,23 @@ kbd{display:inline-block;min-width:30px;padding:3px 8px;border-radius:7px;border
       <span class="titulo" id="tituloJuego">🌧️ Lluvia de letras</span>
       <div class="datos">
         <span>Puntos <b id="jPuntos">0</b></span>
-        <span>Nivel <b id="jNivel">1</b></span>
+        <span>Velocidad <b id="jNivel">1</b></span>
         <span class="vidas" id="jVidas"></span>
       </div>
     </div>
-    <div id="zona"><div class="piso"></div></div>
+    <div id="zona"><div class="piso"></div>
+      <div class="inicio-juego" id="inicioJuego">
+        <div class="tit">🚀 Elige tu velocidad</div>
+        <div class="contador">
+          <button class="sec" id="velMenos" aria-label="Más lento">−</button>
+          <b id="velValor">1</b>
+          <button class="sec" id="velMas" aria-label="Más rápido">+</button>
+        </div>
+        <div class="vel-nombre" id="velNombre"></div>
+        <button id="btnEmpezarJuego">▶ Empezar</button>
+        <div class="suave" style="font-size:14px">También con las flechas <kbd>↑</kbd> <kbd>↓</kbd> y <kbd>Enter</kbd>. Durante el juego, la velocidad sube sola cada 10 aciertos.</div>
+      </div>
+    </div>
     <p class="empieza">Escribe las letras antes de que toquen el suelo. Si se te escapan 3, termina el juego.</p>
   </section>
 
@@ -695,7 +714,7 @@ function generarTexto(lec) {
    ========================================================= */
 const CLAVE = "mecanografia-feliz-v1";
 const DB = {
-  datos: {version:1, ajustes:{sonido:true, colores:true, sinMirar:false, distribucion:"latam"}, pin:null, jugadores:{}, invitados:{}},
+  datos: {version:1, ajustes:{sonido:true, colores:true, sinMirar:false, distribucion:"latam", velLluvia:{}}, pin:null, jugadores:{}, invitados:{}},
   ruta: null, carpeta: null, cola: Promise.resolve(),
   async cargar() {
     let texto = null, copia = null;
@@ -1207,14 +1226,37 @@ $("libreOk").onclick = () => {
    ========================================================= */
 const jg = {modo:null, gotas:[], objetivo:null, puntos:0, aciertos:0, vidas:3, nivel:1, anim:null, ultimo:0, proxima:0, activo:false};
 
+/* Velocidad inicial elegible (1 a 15) para quien ya escribe rápido. Se recuerda por modo. */
+const VEL_MAX = 15;
+const NOMBRE_VEL = v => v <= 3 ? "🐢 Tranquilo" : v <= 6 ? "🐇 Rápido" : v <= 10 ? "🐆 Muy rápido" : "🚀 ¡Experto!";
 function empezarJuego(modo) {
   salirDeLoQueSea();
-  Object.assign(jg, {modo, gotas:[], objetivo:null, puntos:0, aciertos:0, vidas:3, nivel:1, ultimo:performance.now(), proxima:0, activo:true});
+  const vel = Math.min(VEL_MAX, Math.max(1, (ajustes().velLluvia || {})[modo] || 1));
+  Object.assign(jg, {modo, gotas:[], objetivo:null, puntos:0, aciertos:0, vidas:3, nivel:vel, proxima:0, activo:false});
   $("zona").querySelectorAll(".gota").forEach(g => g.remove());
   $("tituloJuego").textContent = modo === "dificil" ? "🌧️ Lluvia de palabras" : "🌧️ Lluvia de letras";
-  mostrar("pJuego"); pintarMarcador();
+  $("inicioJuego").classList.remove("oculto");
+  mostrar("pJuego"); pintarMarcador(); pintarVelocidad();
+}
+function pintarVelocidad() {
+  $("velValor").textContent = jg.nivel; $("velNombre").textContent = NOMBRE_VEL(jg.nivel);
+  $("velMenos").disabled = jg.nivel <= 1; $("velMas").disabled = jg.nivel >= VEL_MAX;
+}
+function cambiarVelocidad(d) {
+  if (jg.activo) return;
+  jg.nivel = Math.min(VEL_MAX, Math.max(1, jg.nivel + d));
+  (ajustes().velLluvia || (ajustes().velLluvia = {}))[jg.modo] = jg.nivel; DB.guardar();
+  pintarVelocidad(); pintarMarcador(); sonar("bien");
+}
+function arrancarJuego() {
+  if (jg.activo) return;
+  $("inicioJuego").classList.add("oculto"); $("btnEmpezarJuego").blur();
+  Object.assign(jg, {activo:true, ultimo:performance.now(), proxima:0});
   jg.anim = requestAnimationFrame(cicloJuego);
 }
+$("velMenos").onclick = () => cambiarVelocidad(-1);
+$("velMas").onclick = () => cambiarVelocidad(1);
+$("btnEmpezarJuego").onclick = arrancarJuego;
 function pararJuego() { jg.activo = false; cancelAnimationFrame(jg.anim); }
 function pintarMarcador() {
   $("jPuntos").textContent = jg.puntos; $("jNivel").textContent = jg.nivel;
@@ -1256,6 +1298,12 @@ function quitarGota(g, explotar) {
   if (explotar) { g.el.classList.add("pum"); setTimeout(() => g.el.remove(), 300); } else g.el.remove();
 }
 function teclaEnJuego(e) {
+  if (!jg.activo && !$("inicioJuego").classList.contains("oculto")) {
+    const accion = {ArrowUp:1, ArrowRight:1, "+":1, ArrowDown:-1, ArrowLeft:-1, "-":-1}[e.key];
+    if (accion) { e.preventDefault(); cambiarVelocidad(accion); }
+    else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); arrancarJuego(); }
+    return;
+  }
   if (!jg.activo || e.key.length !== 1) return;
   e.preventDefault();
   const k = e.key.toLowerCase();

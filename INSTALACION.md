@@ -88,7 +88,8 @@ Es el mismo juego. La diferencia es que el progreso se guarda **en el navegador*
 
 1. Ve a **🏆 Récords → 🔧 Docente** y crea un **PIN** de 4 a 8 números. Anótalo en un lugar seguro. Sirve para borrar alias inapropiados.
 2. En **⚙️ Ajustes → Teclado**, elige **Latinoamérica** o **España**. Si el teclado tiene la tecla **Ç**, es de España.
-3. Los estudiantes **no necesitan registrarse**: empiezan a escribir de una vez. Al terminar la primera lección, el programa les pide un alias para guardar sus estrellas. Quien no escriba alias no aparece en el Salón de la Fama, pero sus partidas cuentan en el **promedio de invitados**. Para seguir otro día con sus estrellas, cada estudiante se busca en **👤 Jugadores**.
+3. Mira la tecla a la **izquierda de la Z**. Si **no** hay una tecla `< >` (pasa en los teclados en inglés), marca en **⚙️ Ajustes** la casilla **"Mi teclado no tiene la tecla < > junto a la Z"**. Este ajuste se guarda en cada computadora.
+4. Los estudiantes **no necesitan registrarse**: empiezan a escribir de una vez. Al terminar la primera lección, el programa les pide un alias para guardar sus estrellas. Quien no escriba alias no aparece en el Salón de la Fama, pero sus partidas cuentan en el **promedio de invitados**. Para seguir otro día con sus estrellas, cada estudiante se busca en **👤 Jugadores**.
 
 ---
 
@@ -124,6 +125,13 @@ Desinstalar **no borra** el progreso de los estudiantes, por si se vuelve a inst
 
 **Las letras que aparecen no coinciden con las teclas**
 → Revisa en **⚙️ Ajustes → Teclado** que esté elegido el teclado correcto (Latinoamérica o España). Revisa también que Windows tenga configurado el mismo teclado.
+
+**El teclado de la pantalla tiene una tecla `< >` que mi teclado no tiene**
+→ Es un teclado en inglés. Marca en **⚙️ Ajustes** la casilla **"Mi teclado no tiene la tecla < > junto a la Z"**. El dibujo cambia y las lecciones ya no piden `<` ni `>`.
+*Para PSeInt:* en esos teclados `<` y `>` se pueden escribir manteniendo **Alt** y tecleando **60** (`<`) o **62** (`>`) en el teclado numérico. En PSeInt también se puede asignar con `=` en vez de `<-`.
+
+**No se ven las manos debajo del teclado**
+→ Las manos ahora están **a los lados del teclado** y todo se achica en pantallas pequeñas. Si aún no caben, reduce el zoom con **Ctrl + -** (en el navegador).
 
 **Olvidé el PIN del docente**
 → Cierra el programa. Pulsa `Win` + `R`, escribe `%APPDATA%\MecanografiaFeliz\datos.json` y ábrelo con el Bloc de notas. Cambia `"pin":"1234"` (con tu número) por `"pin":null` y guarda. La próxima vez podrás crear un PIN nuevo.

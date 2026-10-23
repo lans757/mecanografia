@@ -86,7 +86,7 @@ h2{margin:0 0 12px}
 .datos{display:flex;gap:18px;color:var(--suave);font-size:15px;align-items:center}
 .datos b{color:var(--texto);font-size:18px}
 #reloj.urgente b{color:var(--mal)}
-#texto{font-family:Consolas,"Courier New",monospace;font-size:30px;line-height:1.7;white-space:pre-wrap;padding:18px 22px;min-height:150px;max-height:260px;overflow:hidden;border-radius:16px;background:var(--panel);border:2px solid var(--borde);position:relative}
+#texto{font-family:Consolas,"Courier New",monospace;font-size:28px;line-height:1.65;white-space:pre-wrap;padding:14px 20px;min-height:130px;max-height:200px;overflow:hidden;border-radius:16px;background:var(--panel);border:2px solid var(--borde);position:relative}
 #texto .pal{display:inline-block;white-space:nowrap}
 #texto .c{border-radius:5px;padding:0 1px}
 #texto .c.hecho{color:var(--bien)}
@@ -100,28 +100,33 @@ h2{margin:0 0 12px}
 .aviso{background:#fff3cd;color:#7a5a00;border-radius:10px;padding:8px 12px;text-align:center;margin-bottom:10px}
 .empieza{text-align:center;color:var(--suave);margin-top:6px;font-size:15px}
 .sinmirar #zonaTeclado,.sinmirar #pista{display:none}
-.sinmirar.ayuda #zonaTeclado{display:block}
+.sinmirar.ayuda #zonaTeclado{display:flex}
 .sinmirar.ayuda #pista{display:block}
 
-/* Teclado */
-.teclado{margin:8px auto 0;display:flex;flex-direction:column;gap:6px;width:max-content;max-width:100%;user-select:none}
-.fila{display:flex;gap:6px;justify-content:center}
-.tecla{width:50px;height:50px;border-radius:9px;background:var(--tecla);border:1px solid var(--tecla-borde);box-shadow:var(--sombra);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:17px;font-weight:600;position:relative;transition:transform .05s;color:var(--texto)}
-.tecla .sup{font-size:11px;color:var(--suave);line-height:1}
-.tecla .agr{position:absolute;right:4px;bottom:2px;font-size:10px;color:var(--suave)}
-.tecla.ancha{font-size:12px;color:var(--suave);font-weight:500}
+/* Teclado: --k es el tamaño de una tecla y --g el espacio entre teclas.
+   Las teclas anchas miden "u" teclas: ancho = u·k + (u−1)·g, así todas las filas miden lo mismo. */
+:root{--k:40px;--g:5px}
+.teclado{margin:4px auto 0;display:flex;flex-direction:column;gap:var(--g);width:max-content;max-width:100%;user-select:none}
+.fila{display:flex;gap:var(--g);justify-content:center}
+.tecla{width:var(--k);height:var(--k);flex:none;border-radius:calc(var(--k) * .18);background:var(--tecla);border:1px solid var(--tecla-borde);box-shadow:var(--sombra);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:calc(var(--k) * .38);font-weight:600;position:relative;transition:transform .05s;color:var(--texto)}
+.tecla .sup{font-size:calc(var(--k) * .24);color:var(--suave);line-height:1}
+.tecla .agr{position:absolute;right:3px;bottom:1px;font-size:calc(var(--k) * .22);color:var(--suave)}
+.tecla.ancha{font-size:calc(var(--k) * .27);color:var(--suave);font-weight:500}
 .colores .tecla.d-lp{background:var(--lp)} .colores .tecla.d-lr{background:var(--lr)} .colores .tecla.d-lm{background:var(--lm)} .colores .tecla.d-li{background:var(--li)}
 .colores .tecla.d-ri{background:var(--ri)} .colores .tecla.d-rm{background:var(--rm)} .colores .tecla.d-rr{background:var(--rr)} .colores .tecla.d-rp{background:var(--rp)} .colores .tecla.d-pu{background:var(--pu)}
 .colores .tecla .sup,.colores .tecla .agr{color:inherit;opacity:.7}
-.tecla.guia::after{content:"";position:absolute;bottom:6px;width:12px;height:3px;border-radius:2px;background:currentColor;opacity:.6}
-.tecla.siguiente{outline:4px solid var(--acento);outline-offset:1px;transform:translateY(-3px);z-index:1}
+.tecla.guia::after{content:"";position:absolute;bottom:calc(var(--k) * .1);width:calc(var(--k) * .24);height:3px;border-radius:2px;background:currentColor;opacity:.6}
+.tecla.siguiente{outline:3px solid var(--acento);outline-offset:1px;transform:translateY(-2px);z-index:1}
 .tecla.pulsada{transform:translateY(2px);box-shadow:none}
-.tecla.error{outline:4px solid var(--mal)}
-#zonaTeclado{overflow-x:auto}
+.tecla.error{outline:3px solid var(--mal)}
+/* las manos van a los lados del teclado para que todo quepa en pantallas bajas */
+#zonaTeclado{display:flex;align-items:center;justify-content:center;gap:10px}
+#zonaTeclado .teclado{margin:0;flex:none}
+#zonaTeclado .manos{flex:0 1 auto;min-width:0}
 
 /* Manos */
-.manos{display:flex;justify-content:center;gap:60px;margin-top:14px}
-.manos svg{width:170px;height:auto}
+.manos{display:flex;justify-content:center}
+.manos svg{width:calc(var(--k) * 3.4);max-width:100%;height:auto}
 .manos rect,.manos ellipse{fill:var(--tecla);stroke:var(--tecla-borde);stroke-width:2}
 .colores .manos .f-lp,.colores .manos .f-rp{fill:var(--lp)} .colores .manos .f-lr,.colores .manos .f-rr{fill:var(--lr)}
 .colores .manos .f-lm,.colores .manos .f-rm{fill:var(--lm)} .colores .manos .f-li,.colores .manos .f-ri{fill:var(--li)} .colores .manos .f-pu{fill:var(--pu)}
@@ -219,12 +224,26 @@ kbd{display:inline-block;min-width:30px;padding:3px 8px;border-radius:7px;border
 #retoAtajos .pregunta{font-size:36px;font-weight:800;margin:20px 0 6px}
 #retoAtajos .respuesta{min-height:44px;font-size:20px;margin:10px 0}
 
+/* pantallas bajas (laptops de 768 px o menos): todo más compacto */
+@media (max-height:760px){
+  :root{--k:37px;--g:4px}
+  main{padding-top:10px}
+  #texto{font-size:23px;min-height:96px;max-height:140px;padding:10px 16px}
+  .pista{margin:6px 0;font-size:17px;min-height:24px}
+  .pista b{font-size:19px}
+  .empieza{margin-top:2px}
+  .barra{margin-bottom:8px}
+}
+@media (max-height:620px){
+  :root{--k:31px;--g:3px}
+  #texto{font-size:20px;min-height:80px;max-height:110px}
+}
 @media (max-width:760px){
-  .tecla{width:30px;height:36px;font-size:13px;border-radius:6px}
+  :root{--k:20px;--g:3px}
   .tecla .sup,.tecla .agr{display:none}
-  .fila{gap:3px} .teclado{gap:3px}
   #texto{font-size:22px}
-  .manos{gap:20px} .manos svg{width:120px}
+  #zonaTeclado{flex-wrap:wrap}
+  #zonaTeclado .teclado{order:-1;flex-basis:100%}
   .arc-cab,.arc-fila{grid-template-columns:44px 34px 1fr auto;font-size:16px}
   .arc-titulo{font-size:26px}
 }
@@ -322,8 +341,9 @@ kbd{display:inline-block;min-width:30px;padding:3px 8px;border-radius:7px;border
     <div class="empieza" id="empieza">Empieza a escribir cuando quieras. El reloj arranca con la primera tecla.</div>
     <div class="pista" id="pista"></div>
     <div id="zonaTeclado">
+      <div class="manos" id="manoIzq"></div>
       <div class="teclado" id="tecladoPractica"></div>
-      <div class="manos" id="manos"></div>
+      <div class="manos" id="manoDer"></div>
     </div>
   </section>
 
@@ -504,6 +524,7 @@ kbd{display:inline-block;min-width:30px;padding:3px 8px;border-radius:7px;border
     <label class="opcion"><input type="checkbox" id="optSinMirar"><span>🙈 Modo sin mirar<small>Esconde el teclado y las pistas. Si te equivocas 3 veces seguidas en la misma letra, la ayuda aparece.</small></span></label>
     <div class="opcion" style="cursor:default"><span style="flex:1">⌨️ Teclado<small>Mira tu teclado: si tiene la tecla <b>Ç</b>, es de España.</small></span>
       <select id="optDistribucion"><option value="latam">Latinoamérica</option><option value="es">España</option></select></div>
+    <label class="opcion"><input type="checkbox" id="optAnsi"><span>🇺🇸 Mi teclado <b>no</b> tiene la tecla <b>&lt; &gt;</b> junto a la Z<small>Pasa en los teclados en inglés. El dibujo cambia a esa forma y las lecciones no piden &lt; ni &gt;, porque en esos teclados no se pueden escribir.</small></span></label>
     <div class="acerca">
       <b>Mecanografía Feliz</b> · herramienta educativa libre y gratuita<br>
       Hecha por <b>Leonardo Caripa</b><br>
@@ -571,19 +592,33 @@ const DISTRIBUCIONES = {
     [["<",">"], ...letrasDe("zxcvbnm"), [",",";"], [".",":"], ["-","_"]]
   ]
 };
-const TECLAS_ANTES = [null,
-  {nombre:"Tab",ancho:72,id:"tab",dedo:"lp"},
-  {nombre:"Bloq Mayús",ancho:86,id:"bloqmayus",dedo:"lp"},
-  {nombre:"Mayús",ancho:62,id:"shiftIzq",dedo:"lp"}];
-const TECLAS_DESPUES = [
-  {nombre:"Borrar",ancho:90,id:"retroceso",dedo:"rp"},
-  {nombre:"Enter",ancho:68,id:"enter",dedo:"rp"},
-  {nombre:"",ancho:54,id:"enter",dedo:"rp"},
-  {nombre:"Mayús",ancho:136,id:"shiftDer",dedo:"rp"}];
+// Teclas especiales; "u" = ancho en teclas normales (cada fila suma 15).
+// Teclado con tecla < > (ISO, el común en español):
+const ESPECIALES_ISO = {
+  antes:   [null, {nombre:"Tab",u:1.5,id:"tab",dedo:"lp"}, {nombre:"Bloq Mayús",u:1.75,id:"bloqmayus",dedo:"lp"}, {nombre:"Mayús",u:1.25,id:"shiftIzq",dedo:"lp"}],
+  despues: [{nombre:"Borrar",u:2,id:"retroceso",dedo:"rp"}, {nombre:"Enter",u:1.5,id:"enter",dedo:"rp"}, {nombre:"",u:1.25,id:"enter",dedo:"rp"}, {nombre:"Mayús",u:2.75,id:"shiftDer",dedo:"rp"}]
+};
+// Teclado en inglés (ANSI): no hay tecla < >, el Mayús izquierdo es largo, el Enter ocupa una sola
+// fila y la tecla que estaba a su izquierda (} en Latinoamérica, Ç en España) sube encima de él.
+const ESPECIALES_ANSI = {
+  antes:   [null, {nombre:"Tab",u:1.5,id:"tab",dedo:"lp"}, {nombre:"Bloq Mayús",u:1.75,id:"bloqmayus",dedo:"lp"}, {nombre:"Mayús",u:2.25,id:"shiftIzq",dedo:"lp"}],
+  despues: [{nombre:"Borrar",u:2,id:"retroceso",dedo:"rp"}, null, {nombre:"Enter",u:2.25,id:"enter",dedo:"rp"}, {nombre:"Mayús",u:2.75,id:"shiftDer",dedo:"rp"}]
+};
 const FILA_ESPACIO = [
-  {nombre:"Ctrl",ancho:70,id:"ctrl"},{nombre:"⊞ Win",ancho:56,id:"win"},{nombre:"Alt",ancho:62,id:"alt"},
-  {nombre:"Espacio",ancho:406,id:"espacio",dedo:"pu"},
-  {nombre:"AltGr",ancho:62,id:"altgr",dedo:"pu"},{nombre:"⊞",ancho:56,id:"win2"},{nombre:"Ctrl",ancho:70,id:"ctrl2"}];
+  {nombre:"Ctrl",u:1.25,id:"ctrl"},{nombre:"⊞ Win",u:1.25,id:"win"},{nombre:"Alt",u:1.25,id:"alt"},
+  {nombre:"Espacio",u:6,id:"espacio",dedo:"pu"},
+  {nombre:"AltGr",u:1.25,id:"altgr",dedo:"pu"},{nombre:"⊞",u:1.25,id:"win2"},{nombre:"☰",u:1.25,id:"menu"},{nombre:"Ctrl",u:1.5,id:"ctrl2"}];
+const anchoTecla = u => u === 1 ? "" : `calc(${u} * var(--k) + ${u - 1} * var(--g))`;
+/* Filas de caracteres y dedos según el teclado elegido y su forma (con o sin tecla < >). */
+function filasFisicas() {
+  const filas = (DISTRIBUCIONES[ajustes().distribucion] || DISTRIBUCIONES.latam).map(f => f.slice());
+  const dedos = DEDOS_POS.map(f => f.slice());
+  if (ajustes().ansi) {
+    filas[1].push(filas[2].pop()); dedos[1].push(dedos[2].pop()); // la tecla junto al Enter sube
+    filas[3].shift(); dedos[3].shift();                           // desaparece la tecla < >
+  }
+  return {filas, dedos, especiales: ajustes().ansi ? ESPECIALES_ANSI : ESPECIALES_ISO};
+}
 const NOMBRE_DEDO = {lp:"meñique izquierdo",lr:"anular izquierdo",lm:"dedo medio izquierdo",li:"índice izquierdo",
   ri:"índice derecho",rm:"dedo medio derecho",rr:"anular derecho",rp:"meñique derecho",pu:"pulgar"};
 const GUIA = "asdfjklñ";
@@ -593,12 +628,12 @@ const ACENTOS = {"á":"a","é":"e","í":"i","ó":"o","ú":"u","Á":"A","É":"E",
 let MAPA = {};
 function construirMapa() {
   MAPA = {};
-  const filas = DISTRIBUCIONES[ajustes().distribucion] || DISTRIBUCIONES.latam;
+  const {filas, dedos} = filasFisicas();
   // primero los de AltGr, para que si un símbolo existe sin AltGr gane esa forma (más fácil)
-  filas.forEach((fila, f) => fila.forEach((t, i) => { if (t[2]) MAPA[t[2]] = {id:"k-"+t[0], dedo:DEDOS_POS[f][i], altgr:true}; }));
+  filas.forEach((fila, f) => fila.forEach((t, i) => { if (t[2]) MAPA[t[2]] = {id:"k-"+t[0], dedo:dedos[f][i], altgr:true}; }));
   filas.forEach((fila, f) => fila.forEach((t, i) => {
-    MAPA[t[1]] = {id:"k-"+t[0], dedo:DEDOS_POS[f][i], shift:true};
-    MAPA[t[0]] = {id:"k-"+t[0], dedo:DEDOS_POS[f][i]};
+    MAPA[t[1]] = {id:"k-"+t[0], dedo:dedos[f][i], shift:true};
+    MAPA[t[0]] = {id:"k-"+t[0], dedo:dedos[f][i]};
   }));
   MAPA[" "] = {id:"espacio", dedo:"pu"};
 }
@@ -681,6 +716,7 @@ const azar = arr => arr[Math.floor(Math.random() * arr.length)];
 const mezclar = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 const palabrasCon = letras => PALABRAS.filter(p => [...p].every(c => letras.includes(c)));
 
+const escribible = texto => [...texto].every(c => pasosPara(c).length);
 function generarTexto(lec) {
   if (lec.tipo === "letras") {
     const nuevas = lec.nuevas || lec.letras;
@@ -700,10 +736,12 @@ function generarTexto(lec) {
     const sueltos = Array.from({length:6}, () => String(Math.floor(Math.random() * 1000)));
     return sueltos.join(" ") + " " + mezclar(FRASES.numeros).slice(0, 3).join(" ");
   }
-  if (lec.tipo === "simbolos") return mezclar(FRASES.simbolos).slice(0, 10).join(" ");
-  if (lec.tipo === "pseint") return mezclar(FRASES.pseint).slice(0, 5).join(" ");
-  if (lec.tipo === "desafio") return azar(FRASES.desafio);
-  return mezclar(FRASES[lec.tipo]).slice(0, 4).join(" ");
+  // solo frases que se puedan escribir con este teclado (en inglés no hay < ni >)
+  const frases = FRASES[lec.tipo].filter(escribible);
+  if (lec.tipo === "simbolos") return mezclar(frases).slice(0, 10).join(" ");
+  if (lec.tipo === "pseint") return mezclar(frases).slice(0, 5).join(" ");
+  if (lec.tipo === "desafio") return azar(frases);
+  return mezclar(frases).slice(0, 4).join(" ");
 }
 
 /* =========================================================
@@ -714,7 +752,7 @@ function generarTexto(lec) {
    ========================================================= */
 const CLAVE = "mecanografia-feliz-v1";
 const DB = {
-  datos: {version:1, ajustes:{sonido:true, colores:true, sinMirar:false, distribucion:"latam", velLluvia:{}}, pin:null, jugadores:{}, invitados:{}},
+  datos: {version:1, ajustes:{sonido:true, colores:true, sinMirar:false, distribucion:"latam", ansi:false, velLluvia:{}}, pin:null, jugadores:{}, invitados:{}},
   ruta: null, carpeta: null, cola: Promise.resolve(),
   async cargar() {
     let texto = null, copia = null;
@@ -959,23 +997,25 @@ $("btnVerAtajos").onclick = pintarAtajos;
    ========================================================= */
 function pintarTeclado(cont) {
   cont.innerHTML = "";
-  const filas = DISTRIBUCIONES[ajustes().distribucion] || DISTRIBUCIONES.latam;
+  const {filas, dedos, especiales} = filasFisicas();
   const especial = t => {
-    const d = document.createElement("div"); d.className = "tecla ancha"; d.textContent = t.nombre; d.style.width = t.ancho + "px";
+    const d = document.createElement("div"); d.className = "tecla ancha"; d.textContent = t.nombre; d.style.width = anchoTecla(t.u);
     d.dataset.k = t.id; if (t.dedo) d.classList.add("d-" + t.dedo);
     return d;
   };
   filas.forEach((fila, f) => {
     const div = document.createElement("div"); div.className = "fila";
-    if (TECLAS_ANTES[f]) div.appendChild(especial(TECLAS_ANTES[f]));
+    if (especiales.antes[f]) div.appendChild(especial(especiales.antes[f]));
     fila.forEach((t, i) => {
-      const d = document.createElement("div"); d.className = "tecla d-" + DEDOS_POS[f][i]; d.dataset.k = "k-" + t[0];
+      const d = document.createElement("div"); d.className = "tecla d-" + dedos[f][i]; d.dataset.k = "k-" + t[0];
       const esLetra = t[0].toUpperCase() !== t[0];
       d.innerHTML = (esLetra ? esc(t[1]) : `<span class="sup">${esc(t[1])}</span>${esc(t[0])}`) + (t[2] ? `<span class="agr">${esc(t[2])}</span>` : "");
       if (t[0] === "f" || t[0] === "j") d.classList.add("guia");
+      // en el teclado en inglés, la última tecla de la fila de arriba es ancha (está sobre el Enter)
+      if (!especiales.despues[f] && i === fila.length - 1) d.style.width = anchoTecla(1.5);
       div.appendChild(d);
     });
-    div.appendChild(especial(TECLAS_DESPUES[f]));
+    if (especiales.despues[f]) div.appendChild(especial(especiales.despues[f]));
     cont.appendChild(div);
   });
   const ult = document.createElement("div"); ult.className = "fila";
@@ -992,7 +1032,7 @@ function pintarManos() {
              : `<ellipse class="f-pu" cx="-2" cy="140" rx="15" ry="34" transform="rotate(40 -2 140)"/>`;
     return s + `<rect x="8" y="110" width="140" height="80" rx="30"/></svg>`;
   };
-  $("manos").innerHTML = mano(true) + mano(false);
+  $("manoIzq").innerHTML = mano(true); $("manoDer").innerHTML = mano(false);
 }
 function pintarTodosLosTeclados() {
   construirMapa();
@@ -1215,8 +1255,9 @@ $("libreCancelar").onclick = () => $("vLibre").classList.add("oculto");
 $("libreOk").onclick = () => {
   const limpio = $("libreTexto").value
     .replace(/[“”«»]/g, '"').replace(/[‘’]/g, "'").replace(/[—–]/g, "-")
-    .replace(/[^\S ]+/g, " ").replace(/ {2,}/g, " ").trim()
-    .split("").filter(c => pasosPara(c).length).join("");
+    .replace(/[^\S ]+/g, " ")
+    .split("").filter(c => pasosPara(c).length).join("") // quita lo que este teclado no puede escribir
+    .replace(/ {2,}/g, " ").trim();
   if (limpio.length < 3) return;
   empezarLibre(limpio);
 };
@@ -1583,20 +1624,20 @@ $("rtSalir").onclick = () => { pararReto(); pintarAtajos(); };
 function abrirAjustes() {
   const a = ajustes();
   $("optSonido").checked = a.sonido; $("optColores").checked = a.colores; $("optSinMirar").checked = a.sinMirar;
-  $("optDistribucion").value = a.distribucion;
+  $("optDistribucion").value = a.distribucion; $("optAnsi").checked = !!a.ansi;
   $("vAjustes").classList.remove("oculto");
 }
 function aplicarAjustes() {
   const a = ajustes();
   a.sonido = $("optSonido").checked; a.colores = $("optColores").checked; a.sinMirar = $("optSinMirar").checked;
-  const cambioTeclado = a.distribucion !== $("optDistribucion").value;
-  a.distribucion = $("optDistribucion").value;
+  const cambioTeclado = a.distribucion !== $("optDistribucion").value || !!a.ansi !== $("optAnsi").checked;
+  a.distribucion = $("optDistribucion").value; a.ansi = $("optAnsi").checked;
   DB.guardar();
   document.body.classList.toggle("colores", a.colores);
   aplicarSinMirar();
   if (cambioTeclado) { pintarTodosLosTeclados(); if (pantalla === "pPractica" && !pr.fin) mostrarPista(); }
 }
-["optSonido","optColores","optSinMirar","optDistribucion"].forEach(id => $(id).onchange = aplicarAjustes);
+["optSonido","optColores","optSinMirar","optDistribucion","optAnsi"].forEach(id => $(id).onchange = aplicarAjustes);
 $("ajustesOk").onclick = () => $("vAjustes").classList.add("oculto");
 // Los enlaces se abren en el navegador del sistema (dentro del .exe no hay pestañas)
 document.querySelectorAll(".acerca a").forEach(a => a.onclick = e => {

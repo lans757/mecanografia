@@ -34,6 +34,8 @@ Funciona **sin internet**.
 - **⚙️ Ajustes:**
   - **Modo sin mirar:** esconde el teclado de la pantalla y las pistas. Si el niño se equivoca 3 veces seguidas en la misma letra, la ayuda vuelve a aparecer. También se activa con el botón 🙈 durante la lección.
   - **Teclado Latinoamérica o España:** cambia el dibujo del teclado y las pistas. Por ejemplo, en el teclado de España la `{` se escribe con **AltGr**. Para saber cuál es: si el teclado tiene la tecla **Ç**, es de España.
+  - **Teclado en inglés (sin la tecla `< >` junto a la Z):** el dibujo toma la forma del teclado en inglés. La tecla `}` (o `Ç`) sube encima del Enter y las lecciones dejan de pedir `<` y `>`, que en esos teclados no se pueden escribir con Windows en español.
+- **Teclado en pantalla adaptable:** se achica solo en pantallas bajas (laptops de 768 px) y las manos van a los lados del teclado, para que siempre se vea qué dedo usar.
   - Sonido y colores de dedos.
 
 ### Zona del docente (borrar jugadores)
